@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="./src/css/styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script>
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    </script>
+    <title>角色聊天界面</title>
+    <style>
+        /* ... existing styles ... */
+        
+        @keyframes neonPulse {
+            0% {
+                box-shadow: 0 0 5px #9932cc,
+                           0 0 10px #9932cc,
+                           0 0 20px #9932cc,
+                           0 0 40px #9932cc;
+            }
+            50% {
+                box-shadow: 0 0 10px #800080,
+                           0 0 20px #800080,
+                           0 0 40px #800080,
+                           0 0 80px #800080;
+            }
+            100% {
+                box-shadow: 0 0 5px #9932cc,
+                           0 0 10px #9932cc,
+                           0 0 20px #9932cc,
+                           0 0 40px #9932cc;
+            }
+        }
+        
+        @keyframes textGlitch {
+            0% {
+                text-shadow: 2px 0 #ff0000, -2px 0 #00ff00;
+            }
+            25% {
+                text-shadow: -2px 0 #ff0000, 2px 0 #00ff00;
+            }
+            50% {
+                text-shadow: 2px 0 #0000ff, -2px 0 #ff0000;
+            }
+            75% {
+                text-shadow: -2px 0 #00ff00, 2px 0 #0000ff;
+            }
+            100% {
+                text-shadow: 2px 0 #ff0000, -2px 0 #00ff00;
+            }
+        }
+        
+        @keyframes purplePulse {
+            0% {
+                box-shadow: 0 0 5px #9932cc,
+                           0 0 10px #9932cc,
+                           0 0 20px #9932cc,
+                           0 0 40px #9932cc;
+            }
+            50% {
+                box-shadow: 0 0 10px #800080,
+                           0 0 20px #800080,
+                           0 0 40px #800080,
+                           0 0 80px #800080;
+            }
+            100% {
+                box-shadow: 0 0 5px #9932cc,
+                           0 0 10px #9932cc,
+                           0 0 20px #9932cc,
+                           0 0 40px #9932cc;
+            }
+        }
+        
+        @keyframes goldenPulse {
+            0% {
+                box-shadow: 0 0 5px #ffd700,
+                           0 0 10px #daa520,
+                           0 0 20px #b8860b,
+                           0 0 40px #8b6914,
+                           inset 0 0 15px #ffd700;
+            }
+            50% {
+                box-shadow: 0 0 15px #ffd700,
+                           0 0 30px #daa520,
+                           0 0 60px #b8860b,
+                           0 0 120px #8b6914,
+                           inset 0 0 30px #ffd700;
+            }
+            100% {
+                box-shadow: 0 0 5px #ffd700,
+                           0 0 10px #daa520,
+                           0 0 20px #b8860b,
+                           0 0 40px #8b6914,
+                           inset 0 0 15px #ffd700;
+            }
+        }
+        
+        @keyframes glitchText {
+            0% {
+                text-shadow: 2px 2px #ffd700, -2px -2px #b8860b;
+                transform: translate(1px, 1px);
+            }
+            25% {
+                text-shadow: -2px 2px #daa520, 2px -2px #8b6914;
+                transform: translate(-1px, 1px);
+            }
+            50% {
+                text-shadow: 2px -2px #ffd700, -2px 2px #b8860b;
+                transform: translate(1px, -1px);
+            }
+            75% {
+                text-shadow: -2px -2px #daa520, 2px 2px #8b6914;
+                transform: translate(-1px, -1px);
+            }
+            100% {
+                text-shadow: 2px 2px #ffd700, -2px -2px #b8860b;
+                transform: translate(1px, 1px);
+            }
+        }
+        
+        .record-button {
+            background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+            border: 1px solid #9932cc;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            color: #9932cc;
+            font-size: 14px;
+            padding: 0 16px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            margin: 0 8px;
+            user-select: none;
+            -webkit-user-select: none;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            text-shadow: 0 0 5px #9932cc;
+        }
+        
+        .record-button::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid transparent;
+            border-radius: 24px;
+            background: linear-gradient(45deg, #800080, #9932cc, #800080);
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderRotate 4s linear infinite;
+        }
+        
+        @keyframes borderRotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .record-button:active {
+            transform: scale(0.98);
+            animation: purplePulse 0.5s ease-in-out infinite;
+            background: linear-gradient(45deg, #2a2a2a, #3a3a3a);
+        }
+        
+        .record-button:active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                rgba(128, 0, 128, 0.2),
+                rgba(153, 50, 204, 0.2));
+            animation: glowPulse 1s ease-in-out infinite;
+        }
+        
+        .record-button.recording {
+            animation: goldenPulse 1s ease-in-out infinite;
+            background: linear-gradient(45deg, 
+                #1a1a1a,
+                #2a2a2a,
+                #1a1a1a
+            );
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .record-button.recording::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 20%,
+                rgba(255, 215, 0, 0.1) 40%,
+                rgba(218, 165, 32, 0.2) 60%,
+                transparent 80%
+            );
+            animation: rotateGradient 3s linear infinite;
+        }
+        
+        .record-button.recording::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(255, 215, 0, 0.1) 0%,
+                rgba(218, 165, 32, 0.1) 5%,
+                transparent 5%,
+                transparent 10%
+            );
+            animation: glitchPattern 0.5s steps(1) infinite;
+        }
+        
+        @keyframes rotateGradient {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes glitchPattern {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        .record-button.recording span {
+            animation: glitchText 2s infinite;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .mic-button {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            color: #666;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .mic-button:hover {
+            color: #333;
+        }
+        
+        .mic-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        @keyframes glowPulse {
+            0% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 0.5;
+            }
+        }
+        
+        /* ... rest of existing styles ... */
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="chat-container">
+            <div class="top-nav">
+                <div class="nav-buttons">
+                    <div class="nav-button close"></div>
+                    <div class="nav-button minimize"></div>
+                    <div class="nav-button expand"></div>
+                </div>
+                <div class="address-bar">chat.example.com</div>
+            </div>
+            
+            <div class="main-content">
+                <div class="character-sidebar">
+                    <div class="character-avatar">
+                        <img src="../src/assets/ystx.png" alt="苏苏">
+                    </div>
+                    <div class="character-name">苏苏</div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-label">
+                            <span>电光电量</span>
+                            <span>71%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill-positive" style="width: 71%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-label">
+                            <span>脱机指数</span>
+                            <span>65%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill-negative" style="width: 65%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-tags">
+                        <div class="tag">客户AI</div>
+                        <div class="tag">虚拟形象</div>
+                        <div class="tag">24H特别</div>
+                    </div>
+                </div>
+                
+                <div class="chat-area">
+                    <div class="chat-header">
+                        你与已上线一位人品非常纯粹的AI
+                    </div>
+                    
+                    <div class="messages-container">
+                        <div class="message incoming">
+                            <div class="message-avatar">
+                                <img src="../src/assets/ystx.png" alt="苏苏小可爱">
+                            </div>
+                            <div class="message-content">
+                                欢迎小可爱注册～
+                            </div>
+                        </div>
+                        
+                        <div class="message outgoing">
+                            <div class="message-content">
+                                苏苏 我这就想 想得很! 都不能说我的00后钱 让我买东西好难啊!
+                            </div>
+                        </div>
+                        
+                        <div class="message incoming">
+                            <div class="message-avatar">
+                                <img src="../src/assets/ystx.png" alt="苏苏小可爱">
+                            </div>
+                            <div class="message-content">
+                                「温柔长情讲述头发」真是听听你跟我干了一些似乎大人也放心不出扰邻或闹？何种小小麻烦该怎么好好叙述？（微排小姨）不会下次这全是奥i没有不良想法对了吗
+                            </div>
+                        </div>
+                        
+                        <div class="message incoming">
+                            <div class="message-avatar">
+                                <img src="../src/assets/ystx.png" alt="苏苏小可爱">
+                            </div>
+                            <div class="message-content">
+                                (轻轻地叹地看那酒) 其是小菜爱的孩子，还记得看不到妈妈那样虽然习惯,有话想对你说...但...（请不要家就爱谁户典）不必但海朵书好厉害超过人，才能明明要多思理围饭！（减角防但一丝砂融的笑容）相应ァ咝?
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-area">
+                        <button class="mic-button" 
+                               :class="{ 
+                                  'disabled': !browserSupport.supported 
+                               }" 
+                               @click="handleMicClick"
+                               :title="getMicButtonTitle()">
+                            <i class="material-icons">{{ getMicIcon() }}</i>
+                        </button>
+                        <input v-if="isInputMode" 
+                               type="text" 
+                               id="message-input" 
+                               class="message-input" 
+                               v-model="inputValue" 
+                               :placeholder="inputPlaceholder" 
+                               @keyup.enter="sendMessage">
+                        <button v-else 
+                                class="message-input record-button"
+                                :class="{ 'recording': isRecording }"
+                                @mousedown="startRecording" 
+                                @mouseup="stopRecording"
+                                @touchstart="startRecording" 
+                                @touchend="stopRecording"
+                                @mouseleave="stopRecording">
+                            {{ inputPlaceholder }}
+                        </button>
+                        <button class="send-button" @click="sendMessage">
+                            <i class="material-icons">send</i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="function-sidebar">
+                    <div class="function-button like-button">关注</div>
+                    <div class="function-button video-button">视频</div>
+                    <div class="function-button live-button">互动</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- <div class="bilibili-logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="25" width="80" height="50" rx="10" fill="#ffffff" opacity="0.6"/>
+                <rect x="25" y="10" width="10" height="25" rx="5" fill="#ffffff" opacity="0.6"/>
+                <rect x="65" y="10" width="10" height="25" rx="5" fill="#ffffff" opacity="0.6"/>
+            </svg>
+        </div> -->
+    </div>
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>
