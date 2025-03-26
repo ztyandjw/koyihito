@@ -8,7 +8,7 @@
     cursor: pointer;
     overflow: hidden;
     transition: all 0.3s ease;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+    /* 移除默认的呼吸灯动画和阴影 */
 }
 
 .battle-button::before {
@@ -18,32 +18,36 @@
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(45deg, #ff0000, #ff6b6b, #ff0000);
+    background: linear-gradient(45deg, #FF4400, #FF8C00, #FF4400);
     border-radius: 50%;
     z-index: -1;
-    animation: rotateGradient 3s linear infinite;
+    opacity: 0.3; /* 降低默认状态下的亮度 */
+    transition: opacity 0.3s ease;
 }
 
 .battle-kanji {
     font-family: "Noto Sans JP", sans-serif;
     font-size: 24px;
-    color: #ff0000;
-    text-shadow: 0 0 5px #ff0000,
-                 0 0 10px #ff0000,
-                 0 0 15px #ff0000;
-    animation: glowPulse 1.5s ease-in-out infinite;
+    color: #FF8C00;
+    /* 移除默认的文字发光效果 */
+    transition: all 0.3s ease;
 }
 
+/* 鼠标悬停时的效果 */
 .battle-button:hover {
     transform: scale(1.1);
+    box-shadow: 0 0 40px rgba(255, 140, 0, 0.8),
+                0 0 80px rgba(255, 140, 0, 0.6),
+                0 0 120px rgba(255, 140, 0, 0.4);
+}
+
+.battle-button:hover::before {
+    opacity: 1;
+    animation: rotateGradient 3s linear infinite;
 }
 
 .battle-button:hover .battle-kanji {
-    animation: glowIntense 0.5s ease-in-out infinite;
-}
-
-.battle-button:active {
-    transform: scale(0.95);
+    animation: kanjiHoverPulse 1.5s ease-in-out infinite;
 }
 
 @keyframes rotateGradient {
@@ -55,50 +59,39 @@
     }
 }
 
-@keyframes glowPulse {
+@keyframes kanjiHoverPulse {
     0% {
-        text-shadow: 0 0 5px #ff0000,
-                     0 0 10px #ff0000,
-                     0 0 15px #ff0000;
-    }
-    50% {
-        text-shadow: 0 0 10px #ff0000,
-                     0 0 20px #ff0000,
-                     0 0 30px #ff0000,
-                     0 0 40px #ff0000;
-    }
-    100% {
-        text-shadow: 0 0 5px #ff0000,
-                     0 0 10px #ff0000,
-                     0 0 15px #ff0000;
-    }
-}
-
-@keyframes glowIntense {
-    0% {
-        text-shadow: 0 0 10px #ff0000,
-                     0 0 20px #ff0000,
-                     0 0 30px #ff0000,
-                     0 0 40px #ff0000;
+        text-shadow: 0 0 20px #FF4400,
+                    0 0 40px #FF4400,
+                    0 0 60px #FF4400,
+                    0 0 80px #FF4400;
         transform: scale(1);
     }
     50% {
-        text-shadow: 0 0 15px #ff0000,
-                     0 0 30px #ff0000,
-                     0 0 45px #ff0000,
-                     0 0 60px #ff0000;
+        text-shadow: 0 0 30px #FF4400,
+                    0 0 60px #FF4400,
+                    0 0 90px #FF4400,
+                    0 0 120px #FF4400,
+                    0 0 150px #FF4400;
         transform: scale(1.1);
     }
     100% {
-        text-shadow: 0 0 10px #ff0000,
-                     0 0 20px #ff0000,
-                     0 0 30px #ff0000,
-                     0 0 40px #ff0000;
+        text-shadow: 0 0 20px #FF4400,
+                    0 0 40px #FF4400,
+                    0 0 60px #FF4400,
+                    0 0 80px #FF4400;
         transform: scale(1);
     }
 }
 
-/* 添加按钮点击时的能量波纹效果 */
+/* 点击效果 */
+.battle-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 0 60px rgba(255, 140, 0, 0.9),
+                0 0 120px rgba(255, 140, 0, 0.7),
+                0 0 180px rgba(255, 140, 0, 0.5);
+}
+
 .battle-button::after {
     content: '';
     position: absolute;
@@ -106,16 +99,19 @@
     left: 50%;
     width: 0;
     height: 0;
-    background: radial-gradient(circle, rgba(255, 0, 0, 0.8) 0%, rgba(255, 0, 0, 0) 70%);
+    background: radial-gradient(circle, 
+        rgba(255, 140, 0, 0.8) 0%, 
+        rgba(255, 140, 0, 0.5) 30%,
+        rgba(255, 140, 0, 0) 70%);
     transform: translate(-50%, -50%);
     opacity: 0;
     transition: all 0.5s ease;
 }
 
 .battle-button:active::after {
-    width: 150%;
-    height: 150%;
-    opacity: 0.4;
+    width: 200%;
+    height: 200%;
+    opacity: 0.6;
     transition: 0s;
 }
 
