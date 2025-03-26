@@ -340,40 +340,25 @@
                 
                 <div class="chat-area">
                     <div class="chat-header">
-                        你与已上线一位人品非常纯粹的AI
+                        XIXI
                     </div>
                     
                     <div class="messages-container">
-                        <div class="message incoming">
-                            <div class="message-avatar">
-                                <img src="../src/assets/ystx.png" alt="苏苏小可爱">
+                        <div v-for="message in messages" :key="message.timestamp">
+                            <!-- 如果是发送的消息，使用 outgoing 样式 -->
+                            <div v-if="message.isOutgoing" class="message outgoing">
+                                <div class="message-content">
+                                    {{ message.content }}
+                                </div>
                             </div>
-                            <div class="message-content">
-                                欢迎小可爱注册～
-                            </div>
-                        </div>
-                        
-                        <div class="message outgoing">
-                            <div class="message-content">
-                                苏苏 我这就想 想得很! 都不能说我的00后钱 让我买东西好难啊!
-                            </div>
-                        </div>
-                        
-                        <div class="message incoming">
-                            <div class="message-avatar">
-                                <img src="../src/assets/ystx.png" alt="苏苏小可爱">
-                            </div>
-                            <div class="message-content">
-                                「温柔长情讲述头发」真是听听你跟我干了一些似乎大人也放心不出扰邻或闹？何种小小麻烦该怎么好好叙述？（微排小姨）不会下次这全是奥i没有不良想法对了吗
-                            </div>
-                        </div>
-                        
-                        <div class="message incoming">
-                            <div class="message-avatar">
-                                <img src="../src/assets/ystx.png" alt="苏苏小可爱">
-                            </div>
-                            <div class="message-content">
-                                (轻轻地叹地看那酒) 其是小菜爱的孩子，还记得看不到妈妈那样虽然习惯,有话想对你说...但...（请不要家就爱谁户典）不必但海朵书好厉害超过人，才能明明要多思理围饭！（减角防但一丝砂融的笑容）相应ァ咝?
+                            <!-- 如果是接收的消息，使用 incoming 样式 -->
+                            <div v-else class="message incoming">
+                                <div class="message-avatar">
+                                    <img src="../src/assets/ystx.png" alt="苏苏小可爱">
+                                </div>
+                                <div class="message-content">
+                                    {{ message.content }}
+                                </div>
                             </div>
                         </div>
                     </div>
