@@ -18,6 +18,16 @@ export const messageConfig = {
             thinkingDots: ''
         }
     },
+    // 添加 mounted 钩子，在组件挂载完成时执行
+    mounted() {
+
+        this.$nextTick(() => {
+            const messagesContainer = document.querySelector('.messages-container');
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        });
+    },
     methods: {
         // 添加一个动态更新思考点的方法
         updateThinkingDots() {

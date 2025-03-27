@@ -307,9 +307,9 @@
             <div class="main-content">
                 <div class="character-sidebar">
                     <div class="character-avatar">
-                        <img src="../src/assets/ystx.png" alt="苏苏">
+                        <img src="../src/assets/ystx.png" alt="とだ えりか">
                     </div>
-                    <div class="character-name">苏苏</div>
+                    <div class="character-name">とだ えりか</div>
                     
                     <div class="progress-bar">
                         <div class="progress-label">
@@ -412,5 +412,19 @@
         </div> -->
     </div>
     <script type="module" src="./src/main.js"></script>
+    <script>
+        window.onload = function() {
+            setTimeout(() => {
+                const messagesContainer = document.querySelector('.messages-container');
+                if (messagesContainer) {
+                    // 使用平滑滚动
+                    messagesContainer.scrollTo({
+                        top: messagesContainer.scrollHeight,
+                        behavior: 'smooth'  // 添加平滑滚动效果
+                    });
+                }
+            }, 500);
+        };
+    </script>
 </body>
 </html>

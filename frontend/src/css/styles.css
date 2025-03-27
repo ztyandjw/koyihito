@@ -301,6 +301,8 @@ body {
 }
 
 .messages-container {
+    scroll-behavior: smooth;  /* 添加平滑滚动 */
+
     flex: 1;
     overflow-y: auto;
     padding: 16px;
