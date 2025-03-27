@@ -26,7 +26,7 @@ export const messageConfig = {
             return setInterval(() => {
                 const thinkingMessage = this.messages.find(m => m.isThinking);
                 if (thinkingMessage) {
-                    thinkingMessage.content = `对方正在思考中${dots[index]}`;
+                    thinkingMessage.content = `神经网络同步中${dots[index]}`;
                     index = (index + 1) % dots.length;
                 }
             }, 500);
@@ -46,7 +46,7 @@ export const messageConfig = {
 
             // 添加思考中的消息
             const thinkingMessage = {
-                content: '对方正在思考中...',
+                content: '神经网络同步中...',
                 isOutgoing: false,
                 isThinking: true,
                 timestamp: new Date()

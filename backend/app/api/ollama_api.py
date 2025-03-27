@@ -40,7 +40,7 @@ async def chat_with_ollama(request: ChatRequest):
     """
     # 打印请求参数
     print(f"收到聊天请求: {request.dict()}")
-    await asyncio.sleep(10)
+    # await asyncio.sleep(10)
 
     try:
         # 检查是否有现有会话ID，没有则创建新的
