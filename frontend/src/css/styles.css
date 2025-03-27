@@ -1,3 +1,20 @@
+.message.thinking {
+    opacity: 0.7;
+    background: linear-gradient(45deg, #2a2a2a, #3a3a3a);
+    border: 1px solid rgba(255, 140, 0, 0.3);
+    animation: thinkingPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes thinkingPulse {
+    0% { opacity: 0.5; border-color: rgba(255, 140, 0, 0.2); }
+    50% { opacity: 0.8; border-color: rgba(255, 140, 0, 0.5); }
+    100% { opacity: 0.5; border-color: rgba(255, 140, 0, 0.2); }
+}
+
+
+
+
+
 .battle-button {
     position: relative;
     width: 50px;
