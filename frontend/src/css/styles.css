@@ -1,3 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap');
+
+.message-input {
+    /* 保持磨砂质感背景 */
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 140, 0, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    width: calc(100% - 24px);
+    height: 40px;
+    
+    /* 磨砂质感 */
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.05),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.1),
+        0 2px 4px rgba(0, 0, 0, 0.2);
+    
+    /* 赛博朋克文字样式 */
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #FF8C00;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-shadow: 0 0 2px rgba(255, 140, 0, 0.5);
+    
+    /* 磨砂背景纹理保持不变 */
+    background-image: 
+        linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.02) 25%,
+            transparent 25%,
+            transparent 75%,
+            rgba(255, 255, 255, 0.02) 75%
+        ),
+        linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.02) 25%,
+            transparent 25%,
+            transparent 75%,
+            rgba(255, 255, 255, 0.02) 75%
+        );
+    background-size: 4px 4px;
+    background-position: 0 0, 2px 2px;
+}
+
+/* 输入框聚焦时效果 */
+.message-input:focus {
+    outline: none;
+    border-color: rgba(255, 140, 0, 0.3);
+    background-color: rgba(26, 26, 26, 0.8);
+    box-shadow: 
+        inset 0 1px 3px rgba(255, 255, 255, 0.07),
+        inset 0 -1px 3px rgba(0, 0, 0, 0.15),
+        0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* 占位符文本样式 */
+.message-input::placeholder {
+    color: rgba(255, 140, 0, 0.4);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+/* 确保磨砂效果在移动设备上也能工作 */
+@supports not (backdrop-filter: blur(10px)) {
+    .message-input {
+        background: rgba(26, 26, 26, 0.9);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .message.thinking {
     opacity: 0.7;
     background: linear-gradient(45deg, #2a2a2a, #3a3a3a);
