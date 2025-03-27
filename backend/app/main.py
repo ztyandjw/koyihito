@@ -10,6 +10,7 @@ import httpx
 import uuid
 from pathlib import Path
 from .audio_api import router as audio_router  # 导入音频处理路由
+from app.api.ollama_api import router as ollama_router
 
 app = FastAPI()
 
@@ -18,12 +19,19 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
 
 # 包含音频处理路由
 app.include_router(audio_router)
+
+# 注册 API 路由
+app.include_router(
+    ollama_router,
+    prefix="/api/ollama",
+    tags=["ollama"]
+)
 
 # 开发模式配置
 DEV_MODE = True  # 可以通过环境变量控制
@@ -125,6 +133,9 @@ if DEV_MODE:
                 )
             except httpx.ConnectError:
                 return {"error": "Could not connect to Vite dev server"}
+
+    # 如果在开发模式下，挂载前端静态文件
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 else:
     print("prod mode")

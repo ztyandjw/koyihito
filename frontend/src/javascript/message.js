@@ -1,7 +1,7 @@
 // 导出消息处理配置
 export const messageConfig = {
     data() {
-        // 从 localStorage 获取存储的消息，如果没有则使用默认消息
+        // 从 localStorage 获取存储的消息和会话ID
         const savedMessages = localStorage.getItem('chatMessages');
         const defaultMessages = [
             {
@@ -28,24 +28,73 @@ export const messageConfig = {
 
         return {
             inputValue: '', // 输入框的值
-            messages: savedMessages ? JSON.parse(savedMessages) : defaultMessages
+            messages: savedMessages ? JSON.parse(savedMessages) : defaultMessages,
+            currentConversationId: null // 当前会话ID
         }
     },
     methods: {
         // 发送消息方法
-        sendMessage() {
-            // 检查输入值是否为空
+        async sendMessage() {
             if (!this.inputValue.trim()) return;
             
-            // 创建新消息对象
-            const message = {
+            // 创建用户消息对象
+            const userMessage = {
                 content: this.inputValue,
                 isOutgoing: true,
                 timestamp: new Date()
             };
             
-            // 添加消息到数组
-            this.messages.push(message);
+            // 添加用户消息到数组
+            this.messages.push(userMessage);
+            
+            try {
+                // 准备请求数据，如果有会话ID则包含它
+                const requestData = {
+                    message: this.inputValue
+                };
+                if (this.currentConversationId) {
+                    requestData.conversation_id = this.currentConversationId;
+                    console.log('使用现有会话ID:', this.currentConversationId);
+                }
+
+                // 调用后端API
+                const response = await fetch('/api/ollama/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API请求失败: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // 保存新的会话ID
+                this.currentConversationId = data.conversation_id;
+                console.log('保存新的会话ID:', this.currentConversationId);
+
+                // 创建助手回复消息对象
+                const assistantMessage = {
+                    content: data.response,
+                    isOutgoing: false,
+                    timestamp: new Date()
+                };
+
+                // 添加助手回复到消息数组
+                this.messages.push(assistantMessage);
+                
+            } catch (error) {
+                console.error('发送消息失败:', error);
+                this.messages.push({
+                    content: '消息发送失败，请重试',
+                    isOutgoing: false,
+                    timestamp: new Date(),
+                    isError: true
+                });
+            }
             
             // 保存到 localStorage
             localStorage.setItem('chatMessages', JSON.stringify(this.messages));
