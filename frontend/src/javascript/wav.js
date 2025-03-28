@@ -67,28 +67,8 @@ export const appConfig = {
             audioUrl: null,
             recordingStartTime: null,
             messages: [
-                {
-                    content: '欢迎小可爱注册～',
-                    isOutgoing: false,
-                    timestamp: new Date()
-                },
-                {
-                    content: '苏苏 我这就想 想得很! 都不能说我的00后钱 让我买东西好难啊!',
-                    isOutgoing: true,
-                    timestamp: new Date()
-                },
-                {
-                    content: '「温柔长情讲述头发」真是听听你跟我干了一些似乎大人也放心不出扰邻或闹？何种小小麻烦该怎么好好叙述？（微排小姨）不会下次这全是奥i没有不良想法对了吗',
-                    isOutgoing: false,
-                    timestamp: new Date()
-                },
-                {
-                    content: '(轻轻地叹地看那酒) 其是小菜爱的孩子，还记得看不到妈妈那样虽然习惯,有话想对你说...但...（请不要家就爱谁户典）不必但海朵书好厉害超过人，才能明明要多思理围饭！（减角防但一丝砂融的笑容）相应ァ咝?',
-                    isOutgoing: false,
-                    timestamp: new Date()
-                }
             ],
-            serverURL: 'http://localhost:3888',
+            serverURL: 'https://10.66.8.165:30443',
             useServerRecognition: true,
             isProcessing: false,
             browserSupport: browserCompatibility
@@ -154,7 +134,7 @@ export const appConfig = {
                     const audioBlob = new Blob(this.audioChunks, { type: 'audio/wav' });
                     this.audioBlob = audioBlob;
                     this.audioUrl = URL.createObjectURL(audioBlob);
-                    this.addAudioPlayer();
+                    // this.addAudioPlayer();
                 };
                 
                 this.mediaRecorder.start();
@@ -229,8 +209,9 @@ export const appConfig = {
                 
                 const formData = new FormData();
                 formData.append('audio_file', audioBlob, 'recording.wav');
-                
                 const response = await fetch(`${this.serverURL}/api/upload-audio`, {
+
+                // const response = await fetch(`${this.serverURL}/api/upload-audio`, {
                     method: 'POST',
                     body: formData
                 });
@@ -292,83 +273,83 @@ export const appConfig = {
             }
         },
         
-        addAudioPlayer() {
-            const existingPlayer = document.getElementById('audioPlayer');
-            if (existingPlayer) {
-                existingPlayer.remove();
-            }
+        // addAudioPlayer() {
+        //     const existingPlayer = document.getElementById('audioPlayer');
+        //     if (existingPlayer) {
+        //         existingPlayer.remove();
+        //     }
             
-            const existingButton = document.getElementById('playRecordingButton');
-            if (existingButton) {
-                existingButton.remove();
-            }
+        //     const existingButton = document.getElementById('playRecordingButton');
+        //     if (existingButton) {
+        //         existingButton.remove();
+        //     }
             
-            const audioPlayer = document.createElement('audio');
-            audioPlayer.id = 'audioPlayer';
-            audioPlayer.controls = true;
-            audioPlayer.style.display = 'none';
-            audioPlayer.src = this.audioUrl;
+        //     const audioPlayer = document.createElement('audio');
+        //     audioPlayer.id = 'audioPlayer';
+        //     audioPlayer.controls = true;
+        //     audioPlayer.style.display = 'none';
+        //     audioPlayer.src = this.audioUrl;
             
-            document.body.appendChild(audioPlayer);
+        //     document.body.appendChild(audioPlayer);
             
-            const playButton = document.createElement('button');
-            playButton.textContent = '播放录音';
-            playButton.id = 'playRecordingButton';
-            playButton.style.position = 'fixed';
-            playButton.style.bottom = '60px';
-            playButton.style.right = '20px';
-            playButton.style.zIndex = '1000';
-            playButton.style.padding = '8px 16px';
-            playButton.style.backgroundColor = '#4CAF50';
-            playButton.style.color = 'white';
-            playButton.style.border = 'none';
-            playButton.style.borderRadius = '20px';
-            playButton.style.cursor = 'pointer';
-            playButton.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-            playButton.style.display = 'flex';
-            playButton.style.alignItems = 'center';
-            playButton.style.gap = '5px';
+        //     const playButton = document.createElement('button');
+        //     playButton.textContent = '播放录音';
+        //     playButton.id = 'playRecordingButton';
+        //     playButton.style.position = 'fixed';
+        //     playButton.style.bottom = '60px';
+        //     playButton.style.right = '20px';
+        //     playButton.style.zIndex = '1000';
+        //     playButton.style.padding = '8px 16px';
+        //     playButton.style.backgroundColor = '#4CAF50';
+        //     playButton.style.color = 'white';
+        //     playButton.style.border = 'none';
+        //     playButton.style.borderRadius = '20px';
+        //     playButton.style.cursor = 'pointer';
+        //     playButton.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+        //     playButton.style.display = 'flex';
+        //     playButton.style.alignItems = 'center';
+        //     playButton.style.gap = '5px';
             
-            const icon = document.createElement('i');
-            icon.className = 'material-icons';
-            icon.textContent = 'play_arrow';
-            icon.style.fontSize = '20px';
-            playButton.prepend(icon);
+        //     const icon = document.createElement('i');
+        //     icon.className = 'material-icons';
+        //     icon.textContent = 'play_arrow';
+        //     icon.style.fontSize = '20px';
+        //     playButton.prepend(icon);
             
-            playButton.onmouseover = () => {
-                playButton.style.backgroundColor = '#45a049';
-            };
-            playButton.onmouseout = () => {
-                playButton.style.backgroundColor = '#4CAF50';
-            };
+        //     playButton.onmouseover = () => {
+        //         playButton.style.backgroundColor = '#45a049';
+        //     };
+        //     playButton.onmouseout = () => {
+        //         playButton.style.backgroundColor = '#4CAF50';
+        //     };
             
-            let isPlaying = false;
+        //     let isPlaying = false;
             
-            const updatePlayState = (playing) => {
-                isPlaying = playing;
-                icon.textContent = playing ? 'pause' : 'play_arrow';
-                playButton.title = playing ? '暂停' : '播放录音';
-            };
+        //     const updatePlayState = (playing) => {
+        //         isPlaying = playing;
+        //         icon.textContent = playing ? 'pause' : 'play_arrow';
+        //         playButton.title = playing ? '暂停' : '播放录音';
+        //     };
             
-            playButton.onclick = () => {
-                if (isPlaying) {
-                    audioPlayer.pause();
-                } else {
-                    audioPlayer.play();
-                }
-            };
+        //     playButton.onclick = () => {
+        //         if (isPlaying) {
+        //             audioPlayer.pause();
+        //         } else {
+        //             audioPlayer.play();
+        //         }
+        //     };
             
-            audioPlayer.onplay = () => updatePlayState(true);
-            audioPlayer.onpause = () => updatePlayState(false);
-            audioPlayer.onended = () => updatePlayState(false);
+        //     audioPlayer.onplay = () => updatePlayState(true);
+        //     audioPlayer.onpause = () => updatePlayState(false);
+        //     audioPlayer.onended = () => updatePlayState(false);
             
-            const chatContainer = document.querySelector('.chat-container');
-            if (chatContainer) {
-                chatContainer.appendChild(playButton);
-            } else {
-                document.body.appendChild(playButton);
-            }
-        },
+        //     const chatContainer = document.querySelector('.chat-container');
+        //     if (chatContainer) {
+        //         chatContainer.appendChild(playButton);
+        //     } else {
+        //         document.body.appendChild(playButton);
+        //     }
+        // },
         
         sendMessage() {
             if (!this.inputValue.trim()) return;
