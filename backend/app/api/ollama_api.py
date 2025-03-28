@@ -7,6 +7,11 @@ from typing import Dict, List
 import uuid
 import logging
 
+from app.service.tts_service import generate_chat_audio_file
+import os
+import time
+from pathlib import Path
+
 # 配置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -72,6 +77,37 @@ async def chat_with_ollama(request: ChatRequest):
                 stream=False
             )
         )
+
+
+        # 获取Ollama响应内容
+        response_content = response['message']['content']
+        
+        
+        BASE_DIR = Path(__file__).resolve().parent.parent.parent  # 这会得到backend目录的绝对路径
+        media_dir = os.path.join(BASE_DIR, "chat_media")
+        print("11111111" + media_dir)
+        # 使用会话ID和时间戳创建唯一文件名
+        timestamp = int(time.time())
+        audio_filename = f"{conversation_id}_{timestamp}.wav"
+        audio_file_path = os.path.join(media_dir, audio_filename)  # 这是绝对路径
+
+ 
+        # 调用TTS服务生成音频
+        tts_success = generate_chat_audio_file(
+            output_file_path=audio_file_path,
+            text=response_content,
+            text_language="zh"  # 默认使用中文，可根据需要调整
+        )
+        
+        if tts_success:
+            logger.info(f"生成音频成功: {audio_file_path}")
+            # 可以添加音频文件路径到返回结果中，如果前端需要
+            audio_rel_path = os.path.join("chat_media", audio_filename)
+        
+        
+        else:
+            logger.error(f"生成音频失败")
+            audio_rel_path = None
         
         # 添加助手回复到历史记录
         assistant_message = {
