@@ -4,6 +4,8 @@ import os
 import uuid
 from datetime import datetime
 from pathlib import Path
+from app.service.stt_service import speech_to_text
+
 
 router = APIRouter()
 
@@ -25,6 +27,22 @@ async def upload_audio(audio_file: UploadFile = File(...)):
         with open(file_path, "wb") as f:
             f.write(content)
 
+
+        # 调用STT服务进行语音转文本
+        
+        stt_success, transcript = speech_to_text(
+            audio_file_path=str(file_path),
+            language="zh",
+            model="medium"
+        )
+        
+        # 记录STT处理结果
+        if stt_success:
+            print(f"语音识别成功")
+            print(f"识别结果: {transcript}")
+        else:
+            print(f"语音识别失败: {transcript}")
+
         return JSONResponse({
             "success": True,
             "message": "音频上传成功",
@@ -34,6 +52,7 @@ async def upload_audio(audio_file: UploadFile = File(...)):
         })
 
     except Exception as e:
+
         return JSONResponse({
             "success": False,
             "error": str(e)

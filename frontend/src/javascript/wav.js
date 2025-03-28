@@ -209,7 +209,7 @@ export const appConfig = {
                 
                 const formData = new FormData();
                 formData.append('audio_file', audioBlob, 'recording.wav');
-                const response = await fetch(`${this.serverURL}/api/upload-audio`, {
+                const response = await fetch(`/api/upload-audio`, {
 
                 // const response = await fetch(`${this.serverURL}/api/upload-audio`, {
                     method: 'POST',
