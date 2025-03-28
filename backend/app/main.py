@@ -14,6 +14,14 @@ from app.api.ollama_api import router as ollama_router
 
 app = FastAPI()
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+backend_dir = os.path.dirname(current_dir)  # 上一级目录(backend)
+media_dir = os.path.join(backend_dir, "media")
+
+
+# 挂载静态文件目录
+app.mount("/media", StaticFiles(directory=media_dir), name="media")
+print(f"静态文件服务已挂载: {media_dir} -> /media")
 # CORS配置
 app.add_middleware(
     CORSMiddleware,
