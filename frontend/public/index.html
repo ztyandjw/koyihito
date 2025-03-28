@@ -426,24 +426,24 @@
             }, 500);
         };
         
-        document.addEventListener('DOMContentLoaded', function() {
-            // 预加载音频但不播放
-            const audio = new Audio('http://127.0.0.1:3888/media/success.wav');
-            audio.load();
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     // 预加载音频但不播放
+        //     const audio = new Audio('http://127.0.0.1:3888/media/success.wav');
+        //     audio.load();
             
-            // 在用户首次点击页面任何位置时播放
-            document.addEventListener('click', function firstClick() {
-                audio.volume = 0.5;
-                audio.play().then(() => {
-                    console.log("音频已播放");
-                }).catch((error) => {
-                    console.log("音频播放失败:", error);
-                });
+        //     // 在用户首次点击页面任何位置时播放
+        //     document.addEventListener('click', function firstClick() {
+        //         audio.volume = 0.5;
+        //         audio.play().then(() => {
+        //             console.log("音频已播放");
+        //         }).catch((error) => {
+        //             console.log("音频播放失败:", error);
+        //         });
                 
-                // 移除事件监听器，使其只执行一次
-                document.removeEventListener('click', firstClick);
-            }, { once: true }); // 或使用 { once: true } 选项
-        });
+        //         // 移除事件监听器，使其只执行一次
+        //         document.removeEventListener('click', firstClick);
+        //     }, { once: true }); // 或使用 { once: true } 选项
+        // });
     </script>
 
 

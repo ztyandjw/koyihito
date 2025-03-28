@@ -16,12 +16,12 @@ app = FastAPI()
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 backend_dir = os.path.dirname(current_dir)  # 上一级目录(backend)
-media_dir = os.path.join(backend_dir, "media")
+media_dir = os.path.join(backend_dir, "chat_media")
 
 
 # 挂载静态文件目录
-app.mount("/media", StaticFiles(directory=media_dir), name="media")
-print(f"静态文件服务已挂载: {media_dir} -> /media")
+app.mount("/chat_media", StaticFiles(directory=media_dir), name="chat_media")
+print(f"静态文件服务已挂载: {media_dir} -> /chat_media")
 # CORS配置
 app.add_middleware(
     CORSMiddleware,

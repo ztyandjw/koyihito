@@ -29,6 +29,11 @@ export const messageConfig = {
         });
     },
     methods: {
+
+        
+
+
+        
         // 添加一个动态更新思考点的方法
         updateThinkingDots() {
             const dots = ['...', '.. .', '. ..', ' ...'];
@@ -40,6 +45,20 @@ export const messageConfig = {
                     index = (index + 1) % dots.length;
                 }
             }, 500);
+        },
+
+        // 播放音频方法
+        playAudio(audioUrl) {
+            console.log('播放音频:', audioUrl);
+            
+            const audio = new Audio(audioUrl);
+            
+            // 尝试自动播放
+            audio.play().catch(error => {
+                console.error('自动播放失败:', error);
+                // 如果自动播放失败，显示播放按钮
+                this.showPlayButton(audioUrl);  // 使用this.调用方法
+            });
         },
 
         // 发送消息方法
@@ -102,7 +121,7 @@ export const messageConfig = {
 
                 // 移除思考中的消息
                 this.messages = this.messages.filter(msg => !msg.isThinking);
-
+                
                 // 添加实际回复
                 const assistantMessage = {
                     content: data.response,
@@ -110,6 +129,9 @@ export const messageConfig = {
                     timestamp: new Date()
                 };
                 this.messages.push(assistantMessage);
+                if (data.audio_file_path) {
+                    this.playAudio(data.audio_file_path);
+                }
 
             } catch (error) {
                 console.error('发送消息失败:', error);

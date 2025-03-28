@@ -26,6 +26,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
     conversation_id: str
+    audio_file_path: str = None
 
 class ConversationStatus(BaseModel):
     conversation_id: str
@@ -85,7 +86,6 @@ async def chat_with_ollama(request: ChatRequest):
         
         BASE_DIR = Path(__file__).resolve().parent.parent.parent  # 这会得到backend目录的绝对路径
         media_dir = os.path.join(BASE_DIR, "chat_media")
-        print("11111111" + media_dir)
         # 使用会话ID和时间戳创建唯一文件名
         timestamp = int(time.time())
         audio_filename = f"{conversation_id}_{timestamp}.wav"
@@ -120,7 +120,8 @@ async def chat_with_ollama(request: ChatRequest):
         
         return ChatResponse(
             response=response['message']['content'],
-            conversation_id=conversation_id
+            conversation_id=conversation_id,
+            audio_file_path = audio_rel_path
         )
         
     except Exception as e:
