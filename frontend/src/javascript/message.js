@@ -18,15 +18,23 @@ export const messageConfig = {
             thinkingDots: ''
         }
     },
+    beforeMount() {
+        console.log('beforeMount 执行');
+    },
     // 添加 mounted 钩子，在组件挂载完成时执行
     mounted() {
+    
+        // 第一部分：设置事件监听
+        console.log('接受发送事件，emitter是否存在:', !!this.emitter);  
+        
 
-        this.$nextTick(() => {
-            const messagesContainer = document.querySelector('.messages-container');
-            if (messagesContainer) {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
-        });
+        // // 第二部分：滚动到底部
+        // this.$nextTick(() => {
+        //     const messagesContainer = document.querySelector('.messages-container');
+        //     if (messagesContainer) {
+        //         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        //     }
+        // });
     },
     methods: {
 
@@ -63,6 +71,7 @@ export const messageConfig = {
 
         // 发送消息方法
         async sendMessage() {
+            console.log("send!!!!!!!!!!!");
             if (!this.inputValue.trim()) return;
             
             // 用户消息

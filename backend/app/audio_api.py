@@ -48,7 +48,8 @@ async def upload_audio(audio_file: UploadFile = File(...)):
             "message": "音频上传成功",
             "filename": filename,
             "file_path": str(file_path),
-            "file_size": len(content)
+            "file_size": len(content),
+            "stt_text": transcript
         })
 
     except Exception as e:

@@ -1,3 +1,5 @@
+
+
 // 检查浏览器是否支持MediaRecorder
 const checkBrowserCompatibility = () => {
     // 检查是否在浏览器环境中
@@ -68,13 +70,14 @@ export const appConfig = {
             recordingStartTime: null,
             messages: [
             ],
-            serverURL: 'https://10.66.8.165:30443',
+            // serverURL: 'https://10.66.8.165:30443',
             useServerRecognition: true,
             isProcessing: false,
             browserSupport: browserCompatibility
         }
     },
     mounted() {
+        console.log("11111111111111111111111");
         if (!this.browserSupport.supported) {
             console.warn('浏览器不支持录音功能:', this.browserSupport.reason);
             this.inputPlaceholder = '您的浏览器不支持录音功能，请使用Chrome或Firefox';
@@ -232,7 +235,10 @@ export const appConfig = {
                 if (!result.success) {
                     throw new Error(result.error || '上传失败');
                 }
-                
+                console.log("识别文字：", result.stt_text)
+                console.log('准备发送事件，emitter是否存在:', !!this.emitter);  
+                this.emitter.emit('stt-result', result.stt_text);
+
                 console.log('音频上传成功:', result);
                 
             } catch (error) {
@@ -350,27 +356,6 @@ export const appConfig = {
         //         document.body.appendChild(playButton);
         //     }
         // },
-        
-        sendMessage() {
-            if (!this.inputValue.trim()) return;
-            
-            const message = {
-                content: this.inputValue,
-                isOutgoing: true,
-                timestamp: new Date()
-            };
-            
-            this.messages.push(message);
-            this.inputValue = '';
-            this.inputPlaceholder = '输入你想说的内容...';
-            
-            this.$nextTick(() => {
-                const messagesContainer = document.querySelector('.messages-container');
-                if (messagesContainer) {
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                }
-            });
-        }
     },
     unmounted() {
         this.cleanupRecording();
