@@ -76,6 +76,7 @@ export const messageConfig = {
             
             // 用户消息
             const userMessage = {
+                tools_v1: this.tools_v1,
                 content: this.inputValue,
                 isOutgoing: true,
                 timestamp: new Date()
@@ -105,6 +106,7 @@ export const messageConfig = {
 
             try {
                 const requestData = {
+                    tools_v1: this.tools_v1,
                     message: userMessage.content
                 };
                 if (this.currentConversationId) {

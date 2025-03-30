@@ -11,6 +11,8 @@ from app.service.tts_service import generate_chat_audio_file
 import os
 import time
 from pathlib import Path
+from app.service.functioncall_service import call_function_service
+
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -20,6 +22,7 @@ router = APIRouter()
 
 # 简化请求模型，只需要消息内容
 class ChatRequest(BaseModel):
+    tools_v1: bool
     message: str
     conversation_id: str = None  # 可选的会话ID
 
@@ -48,40 +51,43 @@ async def chat_with_ollama(request: ChatRequest):
     print(f"收到聊天请求: {request.dict()}")
     # await asyncio.sleep(10)
 
+
+
     try:
-        # 检查是否有现有会话ID，没有则创建新的
         conversation_id = request.conversation_id or str(uuid.uuid4())
         print(f"使用会话ID: {conversation_id}")
-
-        # 获取或初始化会话历史
+         # 获取或初始化会话历史
         if conversation_id not in conversation_histories:
             conversation_histories[conversation_id] = []
             print(f"创建新会话: {conversation_id}")
         
-        # 添加用户消息到历史记录
-        message = {
-            "role": "user",
-            "content": request.message
-        }
-        conversation_histories[conversation_id].append(message)
-        
-        # 打印当前会话的所有消息
-        print(f"当前会话历史: {conversation_histories[conversation_id]}")
-        
-        loop = asyncio.get_running_loop()
-        response = await loop.run_in_executor(
-            None,
-            partial(
-                ollama_client.chat,
-                model="TaterTot/susu",
-                messages=conversation_histories[conversation_id],  # 发送完整的对话历史
-                stream=False
+        if request.tools_v1:
+        # 调用 functioncall_service
+            response_content = call_function_service(request.message)
+            response_content  = response_content["message"]
+        else:   
+            # 添加用户消息到历史记录
+            message = {
+                "role": "user",
+                "content": request.message
+            }
+            conversation_histories[conversation_id].append(message)
+            
+            # 打印当前会话的所有消息
+            print(f"当前会话历史: {conversation_histories[conversation_id]}")
+            
+            loop = asyncio.get_running_loop()
+            response = await loop.run_in_executor(
+                None,
+                partial(
+                    ollama_client.chat,
+                    model="TaterTot/susu",
+                    messages=conversation_histories[conversation_id],  # 发送完整的对话历史
+                    stream=False
+                )
             )
-        )
-
-
-        # 获取Ollama响应内容
-        response_content = response['message']['content']
+            # 获取Ollama响应内容
+            response_content = response['message']['content']
         
         
         BASE_DIR = Path(__file__).resolve().parent.parent.parent  # 这会得到backend目录的绝对路径
@@ -112,14 +118,14 @@ async def chat_with_ollama(request: ChatRequest):
         # 添加助手回复到历史记录
         assistant_message = {
             "role": "assistant",
-            "content": response['message']['content']
+            "content": response_content
         }
         conversation_histories[conversation_id].append(assistant_message)
         
-        print(f"Ollama 响应: {response['message']['content'][:100]}...")
+        print(f"Ollama 响应: {response_content[:100]}...")
         
         return ChatResponse(
-            response=response['message']['content'],
+            response=response_content,
             conversation_id=conversation_id,
             audio_file_path = audio_rel_path
         )
