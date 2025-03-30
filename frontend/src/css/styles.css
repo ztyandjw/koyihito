@@ -1,6 +1,61 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap');
 
+/* 工具人版V1按钮样式 */
+.function-button.active {
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7),
+                0 0 20px rgba(255, 0, 0, 0.4),
+                inset 0 0 15px rgba(255, 0, 0, 0.5) !important;  /* 内外红色故障光效 */
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.8),
+                2px 2px 0 rgba(0, 255, 255, 0.4);  /* 文字故障效果 */
+    animation: glitch 0.5s infinite, 
+              warning-flash 2s infinite;  /* 加快动画频率 */
+    border: 1px solid rgba(255, 0, 0, 0.5);
+    transition: none;
+    position: relative;
+}
 
+/* 增加故障抖动频率和幅度 */
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+    }
+    20% {
+        transform: translate(-3px, 3px);
+        text-shadow: 3px -3px 0 rgba(255, 0, 0, 0.8);
+    }
+    40% {
+        transform: translate(3px, -3px);
+        text-shadow: -3px 3px 0 rgba(255, 0, 0, 0.8);
+    }
+    60% {
+        transform: translate(-3px, -3px);
+        text-shadow: 3px 3px 0 rgba(255, 0, 0, 0.8);
+    }
+    80% {
+        transform: translate(3px, 3px);
+        text-shadow: -3px -3px 0 rgba(255, 0, 0, 0.8);
+    }
+    100% {
+        transform: translate(0);
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+    }
+}
+
+/* 警告闪烁动画 */
+@keyframes warning-flash {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.7),
+                   0 0 20px rgba(255, 0, 0, 0.4),
+                   inset 0 0 15px rgba(255, 0, 0, 0.5);
+    }
+    20%, 22%, 24%, 55% {
+        box-shadow: none;
+        text-shadow: none;
+    }
+    /* 工具人版V1按钮样式 */
+
+}
 
 
 .message-input {

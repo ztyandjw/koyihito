@@ -10,7 +10,8 @@ const app = createApp({
     data() {
         return {
             ...appConfig.data(),
-            ...messageConfig.data()
+            ...messageConfig.data(),
+            tools_v1: false
         }
     },
     mounted() {
@@ -32,7 +33,12 @@ const app = createApp({
     },
     methods: {
         ...appConfig.methods,
-        ...messageConfig.methods
+        ...messageConfig.methods,
+        toggleToolV1() {
+            this.tools_v1 = !this.tools_v1;
+            console.log('赛博苦力V1.0:', this.tools_v1);  // 在控制台输出当前状态
+
+        }
     }
 });
 

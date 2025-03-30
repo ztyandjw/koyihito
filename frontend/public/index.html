@@ -340,7 +340,7 @@
                 
                 <div class="chat-area">
                     <div class="chat-header">
-                        XIXI
+                        「量子语音识别阵列就绪，等待汉语声波输入▌」
                     </div>
                     
                     <div class="messages-container">
@@ -396,9 +396,17 @@
                 </div>
                 
                 <div class="function-sidebar">
-                    <div class="function-button like-button">关注</div>
-                    <div class="function-button video-button">视频</div>
-                    <div class="function-button live-button">互动</div>
+
+                    <div 
+                        class="function-button like-button"
+                        :class="{ 'active': tools_v1 }"
+                        @click="toggleToolV1"
+                    >
+                    「赛博苦力V1.0」
+                    </div>
+                    <!-- <div class="function-button like-button">工具人V1版</div> -->
+                    <div class="function-button video-button">「机奴移动终端」</div>
+                    <div class="function-button live-button">「硅基工具人」</div>
                 </div>
             </div>
         </div>
