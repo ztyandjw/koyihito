@@ -533,20 +533,20 @@ body {
 }
 
 .messages-container {
-    scroll-behavior: smooth;  /* 添加平滑滚动 */
-
+    scroll-behavior: smooth;
     flex: 1;
     overflow-y: auto;
     padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 16px;
+    padding-right: 8px;
 }
 
 .message {
     display: flex;
     margin-bottom: 16px;
-    max-width: 80%;
+    max-width: 95%;
 }
 
 .message.incoming {
@@ -556,6 +556,7 @@ body {
 .message.outgoing {
     align-self: flex-end;
     justify-content: flex-end;
+    margin-right: 0;
 }
 
 .message-avatar {
