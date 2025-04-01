@@ -97,7 +97,9 @@ async def chat_with_ollama(request: ChatRequest):
         audio_filename = f"{conversation_id}_{timestamp}.wav"
         audio_file_path = os.path.join(media_dir, audio_filename)  # 这是绝对路径
 
- 
+
+        print("luyin: " +response_content)
+
         # 调用TTS服务生成音频
         tts_success = generate_chat_audio_file(
             output_file_path=audio_file_path,

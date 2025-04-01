@@ -125,10 +125,10 @@ def call_function_service(user_message):
         print(response.message.tool_calls == None)
         # 检查是否存在 tool_calls
         if response.message.tool_calls is not None:
-            success, result = create_folder_windows(args)
+            result = create_folder_windows(args)
             return {
-                "success": success,
-                "message": result
+                "success": result["success"],
+                "message": result["message"]
             }
         else:
             print("没有工具调用")
