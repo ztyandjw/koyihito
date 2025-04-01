@@ -313,7 +313,7 @@
                     
                     <div class="progress-bar">
                         <div class="progress-label">
-                            <span>电光电量</span>
+                            <span>神经同步率</span>
                             <span>71%</span>
                         </div>
                         <div class="progress-track">
@@ -323,7 +323,7 @@
                     
                     <div class="progress-bar">
                         <div class="progress-label">
-                            <span>脱机指数</span>
+                            <span>熵减稳定性</span>
                             <span>65%</span>
                         </div>
                         <div class="progress-track">
@@ -332,7 +332,7 @@
                     </div>
                     
                     <div class="character-tags">
-                        <div class="tag">客户AI</div>
+                        <div class="tag">赛博苦力</div>
                         <div class="tag">虚拟形象</div>
                         <div class="tag">24H特别</div>
                     </div>
@@ -419,8 +419,12 @@
                     「赛博苦力V1.0」
                     </div>
                     <!-- <div class="function-button like-button">工具人V1版</div> -->
-                    <div class="function-button video-button">「机奴移动终端」</div>
-                    <div class="function-button live-button">「硅基工具人」</div>
+                    <div class="function-button video-button"
+                         :class="{ 'active': terminalActive }"
+                         @click="toggleTerminal">
+                    [AI陪練プロトコル]
+                    </div>
+                    <div class="function-button live-button">「仮面SWAP」</div>
                 </div>
             </div>
         </div>

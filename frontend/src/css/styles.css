@@ -732,9 +732,9 @@ body {
 }
 
 .live-button {
-    background-color: #222;
-    border: 1px solid #44d62c;
-    color: #44d62c;
+    background-color: #765C48; /* 罗意威标志性的棕色 */
+    border: 1px solid #8B7355; /* 稍微浅一点的棕色边框 */
+    color: #F5F5DC; /* 米白色文字，提供更好的对比度 */
 }
 
 /* 移动端适配 */
@@ -784,4 +784,59 @@ body {
 /* 滚动条滑块悬停效果 */
 ::-webkit-scrollbar-thumb:hover {
     background-color: #65CDC5;
+}
+
+/* 为机奴移动终端按钮添加赛博朋克风格抖动和闪烁效果，但保持蒂芙尼蓝颜色 */
+.function-button.video-button.active {
+    animation: terminal-glitch 0.5s infinite, terminal-flash 2s infinite;
+    transition: none;
+    position: relative;
+    /* 保持原有的蒂芙尼蓝颜色 */
+    box-shadow: 0 0 10px rgba(129, 216, 208, 0.7),
+                0 0 20px rgba(129, 216, 208, 0.4),
+                inset 0 0 15px rgba(129, 216, 208, 0.5) !important;
+    text-shadow: 0 0 5px rgba(129, 216, 208, 0.8),
+                2px 2px 0 rgba(27, 75, 72, 0.4);
+    border: 1px solid rgba(129, 216, 208, 0.5);
+}
+
+/* 机奴终端专用的抖动动画 - 使用与glitch相同的动画效果但保持蒂芙尼蓝色调 */
+@keyframes terminal-glitch {
+    0% {
+        transform: translate(0);
+        text-shadow: 0 0 5px rgba(129, 216, 208, 0.8);
+    }
+    20% {
+        transform: translate(-3px, 3px);
+        text-shadow: 3px -3px 0 rgba(129, 216, 208, 0.8);
+    }
+    40% {
+        transform: translate(3px, -3px);
+        text-shadow: -3px 3px 0 rgba(129, 216, 208, 0.8);
+    }
+    60% {
+        transform: translate(-3px, -3px);
+        text-shadow: 3px 3px 0 rgba(129, 216, 208, 0.8);
+    }
+    80% {
+        transform: translate(3px, 3px);
+        text-shadow: -3px -3px 0 rgba(129, 216, 208, 0.8);
+    }
+    100% {
+        transform: translate(0);
+        text-shadow: 0 0 5px rgba(129, 216, 208, 0.8);
+    }
+}
+
+/* 机奴终端专用的闪烁动画 - 使用与warning-flash相同的动画效果但保持蒂芙尼蓝色调 */
+@keyframes terminal-flash {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        box-shadow: 0 0 10px rgba(129, 216, 208, 0.7),
+                   0 0 20px rgba(129, 216, 208, 0.4),
+                   inset 0 0 15px rgba(129, 216, 208, 0.5);
+    }
+    20%, 22%, 24%, 55% {
+        box-shadow: none;
+        text-shadow: none;
+    }
 }
