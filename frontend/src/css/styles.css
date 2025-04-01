@@ -840,3 +840,10 @@ body {
         text-shadow: none;
     }
 }
+
+/* 添加一个固定宽度的容器用于语言显示 */
+.lang-text-container {
+    display: inline-block;
+    width: 36px; /* 减小宽度，刚好容纳"日本语"三个字 */
+    text-align: center;
+}

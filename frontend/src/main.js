@@ -18,7 +18,7 @@ const app = createApp({
             languages: [
                 { code: 'zh', name: '中文' },
                 { code: 'ja', name: '日本语' },
-                { code: 'en', name: '英语' }
+                { code: 'en', name: '英文' }
             ]
         }
     },
