@@ -1,5 +1,89 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&display=swap');
 
+
+
+
+
+
+
+.chat-header {
+    padding: 10px 16px;
+    border-bottom: 1px solid #222;
+    color: #aaa;
+    font-size: 12px;
+    text-align: center;
+}
+
+.header-content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.micro-lang-selector {
+    position: relative;
+    margin-left: 6px;
+    font-size: 12px;
+}
+
+.current-lang {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    height: 16px;
+    border: 1px solid rgba(101, 205, 197, 0.3);
+    border-radius: 2px;
+    background: rgba(17, 17, 17, 0.5);
+    cursor: pointer;
+    width: 48px;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.current-lang:hover {
+    border-color: rgba(101, 205, 197, 0.6);
+    box-shadow: 0 0 3px rgba(101, 205, 197, 0.3);
+}
+
+.lang-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 2px;
+    background: rgba(17, 17, 17, 0.95);
+    border: 1px solid rgba(101, 205, 197, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+    z-index: 10;
+    width: 58px;
+}
+
+.lang-option {
+    padding: 2px 5px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+}
+
+.lang-option:hover {
+    background: rgba(101, 205, 197, 0.1);
+}
+
+.lang-option.active {
+    background: rgba(101, 205, 197, 0.15);
+    color: rgba(101, 205, 197, 0.9);
+}
+
+
+
+
+
+
+
 /* 工具人版V1按钮样式 */
 .function-button.active {
     box-shadow: 0 0 10px rgba(255, 0, 0, 0.7),

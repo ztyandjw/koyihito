@@ -340,7 +340,21 @@
                 
                 <div class="chat-area">
                     <div class="chat-header">
-                        「量子语音识别阵列就绪，等待汉语声波输入▌」
+                        <div class="header-content">
+                            「量子语音识别阵列就绪，等待汉语声波输入▌」
+                            <div class="micro-lang-selector">
+                                <div class="current-lang" @click="toggleLangSelector">{{ selectedLang.name }}</div>
+                                <div class="lang-dropdown" v-if="langSelectorOpen">
+                                    <div class="lang-option" 
+                                         v-for="lang in languages" 
+                                         :key="lang.code" 
+                                         @click="selectLanguage(lang)"
+                                         :class="{'active': selectedLang.code === lang.code}">
+                                        {{ lang.name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="messages-container">

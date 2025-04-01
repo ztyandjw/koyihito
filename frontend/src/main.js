@@ -11,7 +11,14 @@ const app = createApp({
         return {
             ...appConfig.data(),
             ...messageConfig.data(),
-            tools_v1: false
+            tools_v1: false,
+            selectedLang: { code: 'zh', name: '中文' },
+            langSelectorOpen: false,
+            languages: [
+                { code: 'zh', name: '中文' },
+                { code: 'ja', name: '日本语' },
+                { code: 'en', name: '英语' }
+            ]
         }
     },
     mounted() {
@@ -38,6 +45,24 @@ const app = createApp({
             this.tools_v1 = !this.tools_v1;
             console.log('赛博苦力V1.0:', this.tools_v1);  // 在控制台输出当前状态
 
+        },
+        toggleLangSelector(event) {
+            event.stopPropagation();
+            this.langSelectorOpen = !this.langSelectorOpen;
+            
+            if (this.langSelectorOpen) {
+                setTimeout(() => {
+                    document.addEventListener('click', this.closeLangSelector);
+                }, 10);
+            }
+        },
+        closeLangSelector() {
+            this.langSelectorOpen = false;
+            document.removeEventListener('click', this.closeLangSelector);
+        },
+        selectLanguage(lang) {
+            this.selectedLang = lang;
+            this.langSelectorOpen = false;
         }
     }
 });
