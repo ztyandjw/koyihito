@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="../src/main.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="../src/css/styles.css">
+    <title>Modern Chat</title>
+</head>
+<body>
+    <div class="app-container">
+        <div class="chat-header">
+            <div class="user-profile">
+                <img src="../src/assets/ystx.png" alt="Profile" class="avatar">
+                <div class="user-info">
+                    <h3 class="username">苏苏111</h3>
+                    <span class="status">在线</span>
+                </div>
+            </div>
+            <div class="actions">
+                <span class="material-icons">more_vert</span>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message-group">
+                <div class="message incoming">
+                    <img src="../src/assets/ystx.png" alt="Avatar" class="message-avatar">
+                    <div class="message-content">
+                        <p>欢迎来到苏苏的世界~</p>
+                        <span class="message-time">12:01</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message-group outgoing">
+                <div class="message">
+                    <div class="message-content">
+                        <p>Hi 你好呀</p>
+                        <span class="message-time">12:02</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <div class="input-wrapper">
+
+                <button class="mic-button" @click="togglePlaceholder">
+                    <span class="material-icons">mic</span>
+                </button>
+                <input 
+                    type="text" 
+                    :placeholder="inputPlaceholder" 
+                    id="messageInput"
+                    v-model="message"
+                >
+                <button class="mic-button">
+                    <span class="material-icons">mic</span>
+                </button>
+                <input type="text" placeholder="输入消息..." id="messageInput">
+            </div>
+            <button class="send-button">
+                <span class="material-icons">send</span>
+            </button>
+        </div>
+    </div>
+</body>
+</html>
