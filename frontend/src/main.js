@@ -26,6 +26,19 @@ const app = createApp({
         console.log('mounted 方法开始执行');
         app.config.globalProperties.emitter = mitt();
 
+        // 修改滚动逻辑
+        this.$nextTick(() => {
+            const messagesContainer = document.querySelector('.messages-container');
+            if (messagesContainer) {
+                // 使用自定义的平滑滚动，持续时间设为1000ms（1秒）
+                this.smoothScroll(
+                    messagesContainer, 
+                    messagesContainer.scrollHeight, 
+                    1000
+                );
+            }
+        });
+
         this.emitter.on('stt-result', (stt_text) => {
             console.log('收到语音识别结果:', stt_text);
             const message = {
@@ -67,6 +80,32 @@ const app = createApp({
         selectLanguage(lang) {
             this.selectedLang = lang;
             this.langSelectorOpen = false;
+        },
+        // 添加平滑滚动方法
+        smoothScroll(element, target, duration) {
+            const start = element.scrollTop;
+            const distance = target - start;
+            const startTime = performance.now();
+
+            function animation(currentTime) {
+                const timeElapsed = currentTime - startTime;
+                const progress = Math.min(timeElapsed / duration, 1);
+
+                // easeInOutQuad 缓动函数
+                const ease = progress => {
+                    return progress < 0.5
+                        ? 2 * progress * progress
+                        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                };
+
+                element.scrollTop = start + distance * ease(progress);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animation);
+                }
+            }
+
+            requestAnimationFrame(animation);
         }
     }
 });

@@ -438,41 +438,21 @@
         </div> -->
     </div>
     <script type="module" src="./src/main.js"></script>
+    <!-- 删除或注释掉这段代码 -->
+    <!--
     <script>
         window.onload = function() {
             setTimeout(() => {
                 const messagesContainer = document.querySelector('.messages-container');
                 if (messagesContainer) {
-                    // 使用平滑滚动
                     messagesContainer.scrollTo({
                         top: messagesContainer.scrollHeight,
-                        behavior: 'smooth'  // 添加平滑滚动效果
+                        behavior: 'smooth'
                     });
                 }
             }, 500);
         };
-        
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     // 预加载音频但不播放
-        //     const audio = new Audio('http://127.0.0.1:3888/media/success.wav');
-        //     audio.load();
-            
-        //     // 在用户首次点击页面任何位置时播放
-        //     document.addEventListener('click', function firstClick() {
-        //         audio.volume = 0.5;
-        //         audio.play().then(() => {
-        //             console.log("音频已播放");
-        //         }).catch((error) => {
-        //             console.log("音频播放失败:", error);
-        //         });
-                
-        //         // 移除事件监听器，使其只执行一次
-        //         document.removeEventListener('click', firstClick);
-        //     }, { once: true }); // 或使用 { once: true } 选项
-        // });
     </script>
-
-
-
+    -->
 </body>
 </html>
