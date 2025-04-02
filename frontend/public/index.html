@@ -358,11 +358,6 @@
                     </div>
                     
                     <div class="messages-container">
-                        <div class="fold-trigger">
-                            <button class="fold-button" @click="toggleSidebar" :class="{ 'folded': isSidebarFolded }">
-                                <i class="material-icons">{{ isSidebarFolded ? 'keyboard_arrow_left' : 'keyboard_arrow_right' }}</i>
-                            </button>
-                        </div>
                         <div v-for="message in messages" :key="message.timestamp">
                             <!-- 如果是发送的消息，使用 outgoing 样式 -->
                             <div v-if="message.isOutgoing" class="message outgoing">
