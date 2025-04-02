@@ -878,3 +878,79 @@ body {
     width: 36px; /* 减小宽度，刚好容纳"日本语"三个字 */
     text-align: center;
 }
+
+/* 修改触发区域和按钮样式 */
+.fold-trigger {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1000;
+    width: 40px;    /* 触发区域宽度 */
+    height: 120px;  /* 触发区域高度，设置较大便于触发 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fold-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+    border: 1px solid rgba(129, 216, 208, 0.3);
+    color: #81D8D0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0; /* 默认完全透明 */
+    position: relative;
+}
+
+/* 只有当鼠标悬停在触发区域时才显示按钮 */
+.fold-trigger:hover .fold-button {
+    opacity: 1;
+}
+
+/* 按钮悬停效果 */
+.fold-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(129, 216, 208, 0.3),
+                inset 0 0 5px rgba(129, 216, 208, 0.2);
+}
+
+/* 按钮点击效果 */
+.fold-button:active {
+    transform: scale(0.95);
+}
+
+/* 按钮图标样式 */
+.fold-button .material-icons {
+    font-size: 24px;
+    transition: transform 0.3s ease;
+}
+
+/* 折叠状态的图标旋转 */
+.fold-button.folded .material-icons {
+    transform: rotate(180deg);
+}
+
+/* 修改function-sidebar的过渡效果 */
+.function-sidebar {
+    transition: all 0.3s ease;
+}
+
+/* 当侧边栏折叠时的样式 */
+.function-sidebar.centered {
+    position: absolute;
+    right: 50%;
+    transform: translateX(50%);
+    background: rgba(24, 24, 27, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(129, 216, 208, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
