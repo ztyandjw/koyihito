@@ -10,7 +10,7 @@ import httpx
 import uuid
 from pathlib import Path
 from .audio_api import router as audio_router  # 导入音频处理路由
-from app.api.ollama_api import router as ollama_router
+from app.api.chat_api import router as chat_router
 
 app = FastAPI()
 
@@ -36,9 +36,9 @@ app.include_router(audio_router)
 
 # 注册 API 路由
 app.include_router(
-    ollama_router,
-    prefix="/api/ollama",
-    tags=["ollama"]
+    chat_router,
+    prefix="/api",
+    tags=["chat"]  # 改为更通用的标签名
 )
 
 # 开发模式配置

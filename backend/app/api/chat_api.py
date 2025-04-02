@@ -43,7 +43,7 @@ ollama_client = Client(host="http://10.66.8.15:11434")
 conversation_histories: Dict[str, List[dict]] = {}
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat_with_ollama(request: ChatRequest):
+async def chat(request: ChatRequest):
     """
     聊天API端点
     """
