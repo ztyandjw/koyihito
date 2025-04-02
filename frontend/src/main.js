@@ -48,7 +48,7 @@ const app = createApp({
         },
         toggleTerminal() {
             this.ja_v1 = !this.ja_v1;
-            console.log('机奴移动终端:', this.ja_v1);
+            console.log('[AI陪練プロトコル]:', this.ja_v1);
         },
         toggleLangSelector(event) {
             event.stopPropagation();

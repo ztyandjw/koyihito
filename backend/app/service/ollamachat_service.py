@@ -3,13 +3,16 @@ import asyncio
 from functools import partial
 import logging
 from ollama import Client
+from app.configmanager import config
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Initialize Ollama client
-ollama_client = Client(host="http://10.66.8.15:11434")
+ollama_client = Client(host=config.ollama_host)
+
+logger.debug(ollama_client)
 
 async def get_ollama_response(
     conversation_messages: List[Dict[str, str]],
