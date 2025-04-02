@@ -12,7 +12,7 @@ const app = createApp({
             ...appConfig.data(),
             ...messageConfig.data(),
             tools_v1: false,
-            terminalActive: false,
+            ja_v1: false,
             selectedLang: { code: 'zh', name: '中文' },
             langSelectorOpen: false,
             languages: [
@@ -47,8 +47,8 @@ const app = createApp({
             console.log('赛博苦力V1.0:', this.tools_v1);  // 在控制台输出当前状态
         },
         toggleTerminal() {
-            this.terminalActive = !this.terminalActive;
-            console.log('机奴移动终端:', this.terminalActive);
+            this.ja_v1 = !this.ja_v1;
+            console.log('机奴移动终端:', this.ja_v1);
         },
         toggleLangSelector(event) {
             event.stopPropagation();
