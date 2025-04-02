@@ -544,6 +544,10 @@ body {
     padding-top: 0;
     margin-bottom: 70px;
     scroll-behavior: smooth;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: 4px;
+    padding-right: 0;
 }
 
 .message {
@@ -554,12 +558,15 @@ body {
 
 .message.incoming {
     align-self: flex-start;
+    margin-right: auto;
 }
 
+/* 让我发出气泡与右边框近一些 */
 .message.outgoing {
     align-self: flex-end;
     justify-content: flex-end;
-    margin-right: 2px;
+    margin-right: 16px;
+    margin-left: auto;
 }
 
 .message-avatar {
