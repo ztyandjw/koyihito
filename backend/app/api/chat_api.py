@@ -47,6 +47,14 @@ async def chat(request: ChatRequest):
     """
     聊天API端点
     """
+
+        # 以键值对形式打印日志
+    message_preview = request.message[:50] + "..." if len(request.message) > 50 else request.message
+    logger.info("收到聊天请求: message: %r, tools_v1: %s, conversation_id: %s", 
+                message_preview, 
+                request.tools_v1, 
+                request.conversation_id or "新会话")
+                
     # 打印请求参数
     print(f"收到聊天请求: {request.dict()}")
     # await asyncio.sleep(10)
@@ -54,6 +62,10 @@ async def chat(request: ChatRequest):
 
 
     try:
+
+
+
+
         conversation_id = request.conversation_id or str(uuid.uuid4())
         print(f"使用会话ID: {conversation_id}")
          # 获取或初始化会话历史
