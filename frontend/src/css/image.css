@@ -48,18 +48,71 @@
     transform: scale(0.95);
 }
 
-/* 消息中的图片样式 */
+/* 缩略图样式 */
 .message-image {
-    max-width: 200px;
-    max-height: 200px;
+    max-width: 100px;
+    max-height: 100px;
     border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
+    cursor: zoom-in;
     border: 2px solid #40E0D0;
     box-shadow: 0 0 10px rgba(64, 224, 208, 0.3);
+    transition: all 0.3s ease;
 }
 
-.message-image:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(64, 224, 208, 0.5);
+/* 展开的图片样式 */
+.message-image.expanded {
+    max-width: 100%;  /* 限制最大宽度为消息容器的宽度 */
+    max-height: 70vh; /* 限制最大高度为视窗高度的70% */
+    width: auto;
+    height: auto;
+    cursor: zoom-out;
+    object-fit: contain; /* 保持图片比例 */
+}
+
+/* 确保消息容器可以容纳大图 */
+.message-content {
+    max-width: 100%;
+    display: flex;
+    justify-content: center; /* 图片居中显示 */
+}
+
+/* 确保外层消息容器也能正确显示大图 */
+.messages-container .message {
+    max-width: 90%; /* 给边距留些空间 */
+}
+
+/* 图片预览模态框样式 */
+.image-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    overflow: auto;  /* 允许滚动 */
+    cursor: zoom-out;
+}
+
+.image-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.image-modal img {
+    display: block;
+    width: auto;
+    height: auto;
+    /* 移除最大宽高限制，显示原始尺寸 */
+}
+
+@keyframes modalGlow {
+    from {
+        box-shadow: 0 0 20px rgba(64, 224, 208, 0.5);
+    }
+    to {
+        box-shadow: 0 0 40px rgba(64, 224, 208, 0.8);
+    }
 }

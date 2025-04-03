@@ -15,12 +15,13 @@ export const imageConfig = {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    // 添加图片消息
+                    // 添加图片消息，增加isExpanded属性
                     const message = {
                         content: e.target.result,
                         isOutgoing: true,
                         timestamp: new Date(),
-                        type: 'image'
+                        type: 'image',
+                        isExpanded: false  // 默认不展开
                     };
                     this.messages.push(message);
                     
@@ -35,6 +36,23 @@ export const imageConfig = {
                 };
                 reader.readAsDataURL(file);
             }
+        },
+
+        // 切换图片大小
+        toggleImageSize(message) {
+            message.isExpanded = !message.isExpanded;
+        },
+
+        // 点击图片时显示预览
+        showOriginalImage(imageUrl) {
+            this.modalImageUrl = imageUrl;
+            this.showImageModal = true;
+        },
+
+        // 关闭预览
+        closeImageModal() {
+            this.showImageModal = false;
+            this.modalImageUrl = '';
         }
     }
 };

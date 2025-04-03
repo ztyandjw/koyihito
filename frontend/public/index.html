@@ -368,10 +368,12 @@
                             <div v-if="message.isOutgoing" class="message outgoing">
                                 <div class="message-content">
                                     <!-- 如果是图片消息 -->
-                                    <img v-if="message.type === 'image'" 
-                                         :src="message.content" 
-                                         class="message-image" 
-                                         alt="用户上传的图片">
+                                    <div v-if="message.type === 'image'" class="message-content">
+                                        <img :src="message.content" 
+                                             :class="['message-image', { 'expanded': message.isExpanded }]"
+                                             @click="toggleImageSize(message)"
+                                             alt="用户上传的图片">
+                                    </div>
                                     <!-- 如果是文本消息 -->
                                     <span v-else>{{ message.content }}</span>
                                 </div>
