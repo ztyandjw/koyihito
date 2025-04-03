@@ -2,8 +2,8 @@
 const { createApp } = Vue;
 import mitt from 'mitt';
 // 导入配置
-import { appConfig } from './javascript/wav.js';
-import { messageConfig } from './javascript/message.js';
+import { appConfig } from './js/wav.js';
+import { messageConfig } from './js/message.js';
 
 // 创建应用
 const app = createApp({

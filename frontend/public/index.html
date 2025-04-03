@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="./src/css/styles.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script> -->
     <script>
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
     </script>
@@ -291,6 +291,10 @@
         
         /* ... rest of existing styles ... */
     </style>
+    <!-- Vue必须在main.js之前加载 -->
+    <script src="./src/js/prodvue.js"></script>
+    <!-- main.js保持type="module" -->
+    <script type="module" src="./src/main.js"></script>
 </head>
 <body>
     <div id="app">
@@ -437,7 +441,6 @@
             </svg>
         </div> -->
     </div>
-    <script type="module" src="./src/main.js"></script>
     <!-- 删除或注释掉这段代码 -->
     <!--
     <script>
