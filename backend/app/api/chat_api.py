@@ -116,13 +116,10 @@ async def chat(request: ChatRequest):
             # 可以添加音频文件路径到返回结果中，如果前端需要
             audio_rel_path = os.path.join("chat_media", audio_filename)
         
-        
         else:
             logger.error(f"生成音频失败")
             raise HTTPException(status_code=500, detail="生成音频失败")
 
-            
-        
         # 添加助手回复到历史记录
         assistant_message = {
             "role": "assistant",
@@ -145,7 +142,7 @@ async def chat(request: ChatRequest):
         error_msg = f"对话api执行出错: {str(e)}"
         error_stack = traceback.format_exc()
         # 使用logger记录详细错误信息
-        logger.error(f"\n堆栈信息:\n{error_stack}")
+        logger.error(f"堆栈信息:\n{error_stack}")
         # logger.error(error_msg)
         raise HTTPException(status_code=500, detail=error_msg)
 
