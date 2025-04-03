@@ -22,6 +22,7 @@ router = APIRouter()
 
 # 简化请求模型，只需要消息内容
 class ChatRequest(BaseModel):
+    ja_v1: bool,
     tools_v1: bool
     message: str
     conversation_id: str = None  # 可选的会话ID
@@ -55,24 +56,22 @@ async def chat(request: ChatRequest):
                 request.tools_v1, 
                 request.conversation_id or "新会话")
                 
-    # 打印请求参数
-    print(f"收到聊天请求: {request.dict()}")
-    # await asyncio.sleep(10)
-
-
-
     try:
-
-
-
-
         conversation_id = request.conversation_id or str(uuid.uuid4())
-        print(f"使用会话ID: {conversation_id}")
-         # 获取或初始化会话历史
+        logger.info("使用会话ID: %s", conversation_id)
+        # 获取或初始化会话历史
         if conversation_id not in conversation_histories:
             conversation_histories[conversation_id] = []
-            print(f"创建新会话: {conversation_id}")
+            logger.info("会话历史记录不存在，创建新会话集合: %s", conversation_id)
         
+        recent_messages = conversation_histories[conversation_id][-6:] if len(conversation_histories[conversation_id]) >= 3 else conversation_histories[conversation_id]
+        logger.info("当前会话历史 (id: %s): 最近%d条消息: %s", 
+        conversation_id,
+        len(recent_messages),
+        [(msg['role'], msg['content'][:30] + '...' if len(msg['content']) > 30 else msg['content']) 
+            for msg in recent_messages])
+        
+
         if request.tools_v1:
         # 调用 functioncall_service
             response_content = call_function_service(request.message)
@@ -84,9 +83,6 @@ async def chat(request: ChatRequest):
                 "content": request.message
             }
             conversation_histories[conversation_id].append(message)
-            
-            # 打印当前会话的所有消息
-            print(f"当前会话历史: {conversation_histories[conversation_id]}")
             
             loop = asyncio.get_running_loop()
             response = await loop.run_in_executor(
