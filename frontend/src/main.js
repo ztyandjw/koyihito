@@ -4,6 +4,7 @@ import mitt from 'mitt';
 // 导入配置
 import { appConfig } from './js/wav.js';
 import { messageConfig } from './js/message.js';
+import { imageConfig } from './js/image.js';
 
 // 创建应用
 const app = createApp({
@@ -11,6 +12,7 @@ const app = createApp({
         return {
             ...appConfig.data(),
             ...messageConfig.data(),
+            ...imageConfig.data(),
             tools_v1: false,
             ja_v1: false,
             selectedLang: { code: 'zh', name: '中文' },
@@ -55,6 +57,7 @@ const app = createApp({
     methods: {
         ...appConfig.methods,
         ...messageConfig.methods,
+        ...imageConfig.methods,
         toggleToolV1() {
             this.tools_v1 = !this.tools_v1;
             console.log('赛博苦力V1.0:', this.tools_v1);  // 在控制台输出当前状态

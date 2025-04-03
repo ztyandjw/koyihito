@@ -295,6 +295,7 @@
     <script src="./src/js/prodvue.js"></script>
     <!-- main.js保持type="module" -->
     <script type="module" src="./src/main.js"></script>
+    <link rel="stylesheet" href="./src/css/image.css">
 </head>
 <body>
     <div id="app">
@@ -363,13 +364,19 @@
                     
                     <div class="messages-container">
                         <div v-for="message in messages" :key="message.timestamp">
-                            <!-- 如果是发送的消息，使用 outgoing 样式 -->
+                            <!-- 发送的消息 -->
                             <div v-if="message.isOutgoing" class="message outgoing">
                                 <div class="message-content">
-                                    {{ message.content }}
+                                    <!-- 如果是图片消息 -->
+                                    <img v-if="message.type === 'image'" 
+                                         :src="message.content" 
+                                         class="message-image" 
+                                         alt="用户上传的图片">
+                                    <!-- 如果是文本消息 -->
+                                    <span v-else>{{ message.content }}</span>
                                 </div>
                             </div>
-                            <!-- 如果是接收的消息，使用 incoming 样式 -->
+                            <!-- 接收的消息 -->
                             <div v-else class="message incoming">
                                 <div class="message-avatar">
                                     <img src="../src/assets/ystx.png" alt="苏苏小可爱">
@@ -407,6 +414,14 @@
                                 @mouseleave="stopRecording">
                             {{ inputPlaceholder }}
                         </button>
+                        <button class="upload-button battle-button" @click="handleImageUpload">
+                            <i class="material-icons">image</i>
+                        </button>
+                        <input type="file" 
+                               ref="imageInput" 
+                               style="display: none" 
+                               accept="image/*"
+                               @change="onImageSelected">
                         <button class="send-button battle-button" @click="sendMessage">
                             <span class="battle-kanji">発</span>
                         </button>

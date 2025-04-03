@@ -1,0 +1,65 @@
+/* 图片上传按钮样式 */
+.upload-button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 8px;
+    background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+    border: 2px solid #40E0D0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-button::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #40E0D0, #20B2AA, #40E0D0);
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: borderRotate 4s linear infinite;
+}
+
+.upload-button .material-icons {
+    color: #40E0D0;
+    font-size: 24px;
+    text-shadow: 0 0 5px #40E0D0;
+    z-index: 1;
+}
+
+.upload-button:hover {
+    box-shadow: 0 0 15px rgba(64, 224, 208, 0.5);
+}
+
+.upload-button:active {
+    transform: scale(0.95);
+}
+
+/* 消息中的图片样式 */
+.message-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    border: 2px solid #40E0D0;
+    box-shadow: 0 0 10px rgba(64, 224, 208, 0.3);
+}
+
+.message-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(64, 224, 208, 0.5);
+}
