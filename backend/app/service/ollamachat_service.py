@@ -27,7 +27,7 @@ async def get_ollama_response(
             partial(
                 ollama_client.chat,
                 messages=conversation_messages,
-                model_name=model_name,
+                model=model_name,
                 stream=False
             )
         )

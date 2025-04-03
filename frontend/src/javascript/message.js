@@ -106,6 +106,7 @@ export const messageConfig = {
 
             try {
                 const requestData = {
+                    ja_v1: this.ja_v1,
                     tools_v1: this.tools_v1,
                     message: userMessage.content
                 };

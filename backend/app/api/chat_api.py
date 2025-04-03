@@ -6,6 +6,7 @@ from functools import partial
 from typing import Dict, List
 import uuid
 import logging
+import traceback
 
 from app.service.tts_service import generate_chat_audio_file
 import os
@@ -95,10 +96,14 @@ async def chat(request: ChatRequest):
                 "role": "user",
                 "content": request.message
             }
-            call_messages.append(message)
+
+            model_name = config.ja_model if request.ja_v1 == True else config.normal_model
+            logger.info("确定使用大模型: %s", model_name)
+            print(model_name)
+            model_name = config.ja_model if request.ja_v1 == True else config.normal_model
             response_content = await get_ollama_response(
-                    messages=call_messages,
-                    model = config.ja_model if request.ja_v1 == True else config.normal_model
+                    conversation_messages=call_messages,
+                    model_name = model_name
                 )
                 
 
@@ -149,7 +154,12 @@ async def chat(request: ChatRequest):
         )
         
     except Exception as e:
-        error_msg = f"处理请求时出错: {str(e)}"
+
+        error_msg = f"对话api执行出错: {str(e)}"
+        error_stack = traceback.format_exc()
+        # 使用logger记录详细错误信息
+        logger.error("错误堆栈: \n%s", error_stack)
+        logger.error(error_msg)
         raise HTTPException(status_code=500, detail=error_msg)
 
 @router.get("/conversation/{conversation_id}", response_model=ConversationStatus)
