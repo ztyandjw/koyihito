@@ -71,7 +71,6 @@ export const messageConfig = {
 
         // 发送消息方法
         async sendMessage() {
-            console.log("send!!!!!!!!!!!");
             if (!this.inputValue.trim()) return;
             
             // 用户消息
@@ -106,6 +105,7 @@ export const messageConfig = {
 
             try {
                 const requestData = {
+                    ja_v1: this.ja_v1,
                     tools_v1: this.tools_v1,
                     message: userMessage.content
                 };
@@ -124,7 +124,6 @@ export const messageConfig = {
                 if (!response.ok) {
                     throw new Error(`API请求失败: ${response.status}`);
                 }
-
                 const data = await response.json();
                 
                 // 保存会话ID

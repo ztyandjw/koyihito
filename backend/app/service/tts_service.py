@@ -1,5 +1,7 @@
 import requests
-
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def generate_chat_audio_file(output_file_path, text, text_language="zh"):
     """
@@ -14,6 +16,8 @@ def generate_chat_audio_file(output_file_path, text, text_language="zh"):
         bool: True if successful, False otherwise
     """
     try:
+
+        logger.info(f"接收到的文本: {text}; 文本语言: {text_language}; 生成的录音文件路径: {output_file_path}")
         # Prepare the data for the TTS service
         data = {
             "text": text,
@@ -30,9 +34,9 @@ def generate_chat_audio_file(output_file_path, text, text_language="zh"):
                 f.write(response.content)
             return True
         else:
-            print(f"TTS service returned error: {response.status_code}")
+            logger.error(f"TTS call failed: {response.content}")
             return False
             
     except Exception as e:
-        print(f"Error generating audio file: {str(e)}")
-        return False
+        logger.error(f"Error in generate_chat_audio_file: {str(e)}")
+        raise e

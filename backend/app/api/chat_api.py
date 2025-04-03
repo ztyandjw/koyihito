@@ -31,15 +31,13 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
     conversation_id: str
-    audio_file_path: str = None
+    audio_file_path: str
 
 class ConversationStatus(BaseModel):
     conversation_id: str
     message_count: int
     last_message: str = None
 
-# 初始化 Ollama 客户端
-ollama_client = Client(host="http://10.66.8.15:11434")
 
 # 存储对话历史
 conversation_histories_normal: Dict[str, List[dict]] = {}
@@ -53,7 +51,7 @@ async def chat(request: ChatRequest):
 
         # 以键值对形式打印日志
     message_preview = request.message[:50] + "..." if len(request.message) > 50 else request.message
-    logger.info("收到聊天请求: message: %r, tools_v1: %s, conversation_id: %s", 
+    logger.info("收到聊天请求 message: %r; tools_v1: %s; conversation_id: %s", 
                 message_preview, 
                 request.tools_v1, 
                 request.conversation_id or "新会话")
@@ -67,22 +65,13 @@ async def chat(request: ChatRequest):
             if conversation_id not in conversation_histories_ja:
                 conversation_histories_ja[conversation_id] = []
                 logger.info("ja历史会话历史记录不存在，创建新会话集合: %s", conversation_id)
-            call_messages = conversation_histories_ja[conversation_id][-6:] if len(conversation_histories_ja[conversation_id]) >= 3 else conversation_histories_ja[conversation_id]
-            logger.info("当前ja会话历史 (id: %s): 最近%d条消息: %s", 
-            conversation_id,
-            len(call_messages),
-            [(msg['role'], msg['content'][:30] + '...' if len(msg['content']) > 30 else msg['content']) 
-                for msg in call_messages])
+            call_messages = conversation_histories_ja[conversation_id]
+           
         else:
             if conversation_id not in conversation_histories_normal:
                 conversation_histories_normal[conversation_id] = []
-            logger.info("normal会话历史记录不存在，创建新会话集合: %s", conversation_id)
-            call_messages = conversation_histories_normal[conversation_id][-6:] if len(conversation_histories_normal[conversation_id]) >= 3 else conversation_histories_normal[conversation_id]
-            logger.info("当前normal会话历史 (id: %s): 最近%d条消息: %s", 
-            conversation_id,
-            len(call_messages),
-            [(msg['role'], msg['content'][:30] + '...' if len(msg['content']) > 30 else msg['content']) 
-                for msg in call_messages])
+                logger.info("normal会话历史记录不存在，创建新会话集合: %s", conversation_id)
+            call_messages = conversation_histories_normal[conversation_id]
         
         
 
@@ -96,11 +85,11 @@ async def chat(request: ChatRequest):
                 "role": "user",
                 "content": request.message
             }
-
+            chat_size = len(call_messages)
             model_name = config.ja_model if request.ja_v1 == True else config.normal_model
-            logger.info("确定使用大模型: %s", model_name)
-            print(model_name)
+            logger.info(f"确定使用大模型: {model_name}, 当前会话历史大小: {chat_size}")
             model_name = config.ja_model if request.ja_v1 == True else config.normal_model
+            call_messages.append(message)
             response_content = await get_ollama_response(
                     conversation_messages=call_messages,
                     model_name = model_name
@@ -113,9 +102,6 @@ async def chat(request: ChatRequest):
         timestamp = int(time.time())
         audio_filename = f"{conversation_id}_{timestamp}.wav"
         audio_file_path = os.path.join(media_dir, audio_filename)  # 这是绝对路径
-
-
-        print("luyin: " +response_content)
 
         
         # 调用TTS服务生成音频
@@ -133,7 +119,9 @@ async def chat(request: ChatRequest):
         
         else:
             logger.error(f"生成音频失败")
-            audio_rel_path = None
+            raise HTTPException(status_code=500, detail="生成音频失败")
+
+            
         
         # 添加助手回复到历史记录
         assistant_message = {
@@ -144,9 +132,8 @@ async def chat(request: ChatRequest):
             conversation_histories_ja[conversation_id].append(assistant_message)
         else:
             conversation_histories_normal[conversation_id].append(assistant_message)
-        
-        print(f"Ollama 响应: {response_content[:100]}...")
-        
+                
+
         return ChatResponse(
             response=response_content,
             conversation_id=conversation_id,
@@ -158,8 +145,8 @@ async def chat(request: ChatRequest):
         error_msg = f"对话api执行出错: {str(e)}"
         error_stack = traceback.format_exc()
         # 使用logger记录详细错误信息
-        logger.error("错误堆栈: \n%s", error_stack)
-        logger.error(error_msg)
+        logger.error(f"\n堆栈信息:\n{error_stack}")
+        # logger.error(error_msg)
         raise HTTPException(status_code=500, detail=error_msg)
 
 @router.get("/conversation/{conversation_id}", response_model=ConversationStatus)
