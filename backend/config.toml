@@ -1,2 +1,6 @@
 [ollama]
 host = "http://10.66.8.15:11434"
+
+[model]
+normal = "TaterTot/susu"
+ja = "jpp"

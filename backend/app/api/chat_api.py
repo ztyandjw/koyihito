@@ -12,8 +12,8 @@ import os
 import time
 from pathlib import Path
 from app.service.functioncall_service import call_function_service
-
-
+from app.service.ollamachat_service import get_ollama_response
+from app.configmanager import config
 # 配置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ router = APIRouter()
 
 # 简化请求模型，只需要消息内容
 class ChatRequest(BaseModel):
-    ja_v1: bool,
+    ja_v1: bool = False
     tools_v1: bool
     message: str
     conversation_id: str = None  # 可选的会话ID
@@ -41,7 +41,8 @@ class ConversationStatus(BaseModel):
 ollama_client = Client(host="http://10.66.8.15:11434")
 
 # 存储对话历史
-conversation_histories: Dict[str, List[dict]] = {}
+conversation_histories_normal: Dict[str, List[dict]] = {}
+conversation_histories_ja: Dict[str, List[dict]] = {}
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -57,19 +58,31 @@ async def chat(request: ChatRequest):
                 request.conversation_id or "新会话")
                 
     try:
+        call_messages = []
         conversation_id = request.conversation_id or str(uuid.uuid4())
         logger.info("使用会话ID: %s", conversation_id)
         # 获取或初始化会话历史
-        if conversation_id not in conversation_histories:
-            conversation_histories[conversation_id] = []
-            logger.info("会话历史记录不存在，创建新会话集合: %s", conversation_id)
+        if request.ja_v1:
+            if conversation_id not in conversation_histories_ja:
+                conversation_histories_ja[conversation_id] = []
+                logger.info("ja历史会话历史记录不存在，创建新会话集合: %s", conversation_id)
+            call_messages = conversation_histories_ja[conversation_id][-6:] if len(conversation_histories_ja[conversation_id]) >= 3 else conversation_histories_ja[conversation_id]
+            logger.info("当前ja会话历史 (id: %s): 最近%d条消息: %s", 
+            conversation_id,
+            len(call_messages),
+            [(msg['role'], msg['content'][:30] + '...' if len(msg['content']) > 30 else msg['content']) 
+                for msg in call_messages])
+        else:
+            if conversation_id not in conversation_histories_normal:
+                conversation_histories_normal[conversation_id] = []
+            logger.info("normal会话历史记录不存在，创建新会话集合: %s", conversation_id)
+            call_messages = conversation_histories_normal[conversation_id][-6:] if len(conversation_histories_normal[conversation_id]) >= 3 else conversation_histories_normal[conversation_id]
+            logger.info("当前normal会话历史 (id: %s): 最近%d条消息: %s", 
+            conversation_id,
+            len(call_messages),
+            [(msg['role'], msg['content'][:30] + '...' if len(msg['content']) > 30 else msg['content']) 
+                for msg in call_messages])
         
-        recent_messages = conversation_histories[conversation_id][-6:] if len(conversation_histories[conversation_id]) >= 3 else conversation_histories[conversation_id]
-        logger.info("当前会话历史 (id: %s): 最近%d条消息: %s", 
-        conversation_id,
-        len(recent_messages),
-        [(msg['role'], msg['content'][:30] + '...' if len(msg['content']) > 30 else msg['content']) 
-            for msg in recent_messages])
         
 
         if request.tools_v1:
@@ -82,22 +95,13 @@ async def chat(request: ChatRequest):
                 "role": "user",
                 "content": request.message
             }
-            conversation_histories[conversation_id].append(message)
-            
-            loop = asyncio.get_running_loop()
-            response = await loop.run_in_executor(
-                None,
-                partial(
-                    ollama_client.chat,
-                    model="TaterTot/susu",
-                    messages=conversation_histories[conversation_id],  # 发送完整的对话历史
-                    stream=False
+            call_messages.append(message)
+            response_content = await get_ollama_response(
+                    messages=call_messages,
+                    model = config.ja_model if request.ja_v1 == True else config.normal_model
                 )
-            )
-            # 获取Ollama响应内容
-            response_content = response['message']['content']
-        
-        
+                
+
         BASE_DIR = Path(__file__).resolve().parent.parent.parent  # 这会得到backend目录的绝对路径
         media_dir = os.path.join(BASE_DIR, "chat_media")
         # 使用会话ID和时间戳创建唯一文件名
@@ -108,11 +112,12 @@ async def chat(request: ChatRequest):
 
         print("luyin: " +response_content)
 
+        
         # 调用TTS服务生成音频
         tts_success = generate_chat_audio_file(
             output_file_path=audio_file_path,
             text=response_content,
-            text_language="zh"  # 默认使用中文，可根据需要调整
+            text_language="ja" if request.ja_v1 else "zh"  # 根据ja_v1参数动态设置语言
         )
         
         if tts_success:
@@ -130,7 +135,10 @@ async def chat(request: ChatRequest):
             "role": "assistant",
             "content": response_content
         }
-        conversation_histories[conversation_id].append(assistant_message)
+        if request.ja_v1:
+            conversation_histories_ja[conversation_id].append(assistant_message)
+        else:
+            conversation_histories_normal[conversation_id].append(assistant_message)
         
         print(f"Ollama 响应: {response_content[:100]}...")
         
@@ -142,7 +150,6 @@ async def chat(request: ChatRequest):
         
     except Exception as e:
         error_msg = f"处理请求时出错: {str(e)}"
-        print(f"错误: {error_msg}")
         raise HTTPException(status_code=500, detail=error_msg)
 
 @router.get("/conversation/{conversation_id}", response_model=ConversationStatus)
