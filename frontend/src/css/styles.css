@@ -591,7 +591,7 @@ body {
 
 .message-content {
     background-color: #222;
-    padding: 5px 7px;
+    padding: 10px 14px;
     border-radius: 12px;
     max-width: 100%;
 }

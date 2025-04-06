@@ -366,16 +366,15 @@
                         <div v-for="message in messages" :key="message.timestamp">
                             <!-- 发送的消息 -->
                             <div v-if="message.isOutgoing" class="message outgoing">
-                                <div class="message-content">
-                                    <!-- 如果是图片消息 -->
-                                    <div v-if="message.type === 'image'" class="message-content">
-                                        <img :src="message.content" 
-                                             :class="['message-image', { 'expanded': message.isExpanded }]"
-                                             @click="toggleImageSize(message)"
-                                             alt="用户上传的图片">
-                                    </div>
-                                    <!-- 如果是文本消息 -->
-                                    <span v-else>{{ message.content }}</span>
+                                <!-- 如果是图片消息，直接放在message下 -->
+                                <img v-if="message.type === 'image'"
+                                     :src="message.content" 
+                                     :class="['message-image', { 'expanded': message.isExpanded }]"
+                                     @click="toggleImageSize(message)"
+                                     alt="用户上传的图片">
+                                <!-- 如果是文本消息 -->
+                                <div v-else class="message-content">
+                                    <span>{{ message.content }}</span>
                                 </div>
                             </div>
                             <!-- 接收的消息 -->

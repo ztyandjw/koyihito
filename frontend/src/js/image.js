@@ -41,6 +41,14 @@ export const imageConfig = {
         // 切换图片大小
         toggleImageSize(message) {
             message.isExpanded = !message.isExpanded;
+            
+            // 当图片放大时，滚动到底部
+            if (message.isExpanded) {
+                this.$nextTick(() => {
+                    const container = document.querySelector('.messages-container');
+                    this.smoothScroll(container, container.scrollHeight, 500);
+                });
+            }
         },
 
         // 点击图片时显示预览
