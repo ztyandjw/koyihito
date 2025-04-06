@@ -3,9 +3,10 @@ export const messageConfig = {
     data() {
         // 从 localStorage 获取存储的消息和会话ID
         const savedMessages = localStorage.getItem('chatMessages');
+        const savedConversationId = localStorage.getItem('currentConversationId');
         const defaultMessages = [
             {
-                content: '毎日幸せでありますように',
+                content: '欢迎小可爱注册～',
                 isOutgoing: false,
                 timestamp: new Date()
             }
@@ -14,7 +15,7 @@ export const messageConfig = {
         return {
             inputValue: '', // 输入框的值
             messages: savedMessages ? JSON.parse(savedMessages) : defaultMessages,
-            currentConversationId: null, // 当前会话ID
+            currentConversationId: savedConversationId || null, // 从localStorage获取会话ID
             thinkingDots: '',
             pendingImageUploads: [],
             tempImageData: [],
@@ -145,10 +146,13 @@ export const messageConfig = {
 
                 const data = await response.json();
                 
-                // 8. 移除思考中的消息
+                // 保存会话ID
+                this.currentConversationId = data.conversation_id;
+                
+                // 移除思考中的消息
                 this.messages = this.messages.filter(msg => !msg.isThinking);
                 
-                // 9. 添加实际回复
+                // 添加实际回复
                 const assistantMessage = {
                     content: data.response,
                     isOutgoing: false,
@@ -156,15 +160,17 @@ export const messageConfig = {
                 };
                 this.messages.push(assistantMessage);
                 localStorage.setItem('chatMessages', JSON.stringify(this.messages));
+                // 保存会话ID到localStorage
+                localStorage.setItem('currentConversationId', this.currentConversationId);
 
-                // 10. 清空待上传图片列表
+                // 清空待上传图片列表
                 this.pendingImageUploads = [];
                 this.tempImageData = [];
 
                 // 重置图片序号为1
                 this.imageCounter = 0;
 
-                // 11. 播放音频（如果有）
+                // 播放音频（如果有）
                 if (data.audio_file_path) {
                     this.playAudio(data.audio_file_path);
                 }
