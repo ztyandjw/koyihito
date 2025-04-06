@@ -4,6 +4,7 @@ export const imageConfig = {
             showImageModal: false,
             modalImageUrl: '',
             imageCounter: 0, // 添加图片计数器
+            pendingImageUploads: [], // 添加待上传图片列表
         }
     },
     methods: {
@@ -26,9 +27,17 @@ export const imageConfig = {
                         timestamp: new Date(),
                         type: 'image',
                         isExpanded: false,  // 默认不展开
-                        imageNumber: this.imageCounter // 图片序列号
+                        imageNumber: this.imageCounter, // 图片序列号
+                        file: file, // 保存原始文件对象以便上传
+                        uploaded: false, // 标记图片是否已上传
+                        uploadId: null // 存储服务器返回的图片ID
                     };
                     this.messages.push(message);
+                    
+                    // 将图片添加到待上传列表
+                    this.pendingImageUploads.push(message);
+                    
+                    console.log(`新增图片 - 序号: ${this.imageCounter}, 文件名: ${file.name}`);
                     
                     // 清空文件输入框，允许重复选择同一文件
                     this.$refs.imageInput.value = '';

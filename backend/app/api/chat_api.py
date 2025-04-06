@@ -3,13 +3,13 @@ from pydantic import BaseModel
 from ollama import Client
 import asyncio
 from functools import partial
-from typing import Dict, List
+from typing import Dict, List, Optional
 import uuid
 import logging
 import traceback
-
-from app.service.tts_service import generate_chat_audio_file
+import base64
 import os
+from app.service.tts_service import generate_chat_audio_file
 import time
 from pathlib import Path
 from app.service.functioncall_service import call_function_service
@@ -21,12 +21,17 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# 简化请求模型，只需要消息内容
+class ImageData(BaseModel):
+    """图片数据模型"""
+    base64_data: str
+    file_name: str
+
 class ChatRequest(BaseModel):
     ja_v1: bool = False
     tools_v1: bool
     message: str
-    conversation_id: str = None  # 可选的会话ID
+    conversation_id: Optional[str] = None  # 可选的会话ID
+    images: List[ImageData] = []  # 图片数据列表
 
 class ChatResponse(BaseModel):
     response: str
@@ -57,6 +62,41 @@ async def chat(request: ChatRequest):
                 request.conversation_id or "新会话")
                 
     try:
+        # 处理图片
+        if request.images:
+            BASE_DIR = Path(__file__).resolve().parent.parent.parent
+            IMAGES_DIR = os.path.join(BASE_DIR, "images")
+            os.makedirs(IMAGES_DIR, exist_ok=True)
+            
+            saved_image_paths = []
+            for img in request.images:
+                try:
+                    # 生成唯一文件名
+                    timestamp = int(time.time())
+                    unique_id = str(uuid.uuid4())[:8]
+                    ext = os.path.splitext(img.file_name)[1] or '.png'
+                    image_filename = f"img_{timestamp}_{unique_id}{ext}"
+                    image_path = os.path.join(IMAGES_DIR, image_filename)
+                    
+                    # 解码并保存图片
+                    image_data = img.base64_data
+                    if ',' in image_data:
+                        image_data = image_data.split(',')[1]
+                    
+                    with open(image_path, 'wb') as f:
+                        f.write(base64.b64decode(image_data))
+                    
+                    saved_image_paths.append(image_path)
+                    logger.info(f"图片已保存: {image_path}")
+                
+                except Exception as e:
+                    logger.error(f"保存图片失败: {str(e)}")
+                    continue
+            
+            # 将图片信息添加到消息中
+            if saved_image_paths:
+                request.message += "\n[图片列表：" + ", ".join(saved_image_paths) + "]"
+
         call_messages = []
         conversation_id = request.conversation_id or str(uuid.uuid4())
         logger.info("使用会话ID: %s", conversation_id)

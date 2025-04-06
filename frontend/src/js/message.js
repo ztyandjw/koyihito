@@ -15,7 +15,9 @@ export const messageConfig = {
             inputValue: '', // 输入框的值
             messages: savedMessages ? JSON.parse(savedMessages) : defaultMessages,
             currentConversationId: null, // 当前会话ID
-            thinkingDots: ''
+            thinkingDots: '',
+            pendingImageUploads: [],
+            tempImageData: []
         }
     },
     beforeMount() {
@@ -71,48 +73,69 @@ export const messageConfig = {
 
         // 发送消息方法
         async sendMessage() {
-            if (!this.inputValue.trim()) return;
-            
-            // 用户消息
-            const userMessage = {
-                tools_v1: this.tools_v1,
-                content: this.inputValue,
-                isOutgoing: true,
-                timestamp: new Date()
-            };
-            this.messages.push(userMessage);
-
-            // 添加思考中的消息
-            const thinkingMessage = {
-                content: '神经网络同步中...',
-                isOutgoing: false,
-                isThinking: true,
-                timestamp: new Date()
-            };
-            this.messages.push(thinkingMessage);
-
-            // 启动思考动画
-            const thinkingInterval = this.updateThinkingDots();
-            
-            // 清空输入并滚动到底部
-            this.inputValue = '';
-            this.$nextTick(() => {
-                const messagesContainer = document.querySelector('.messages-container');
-                if (messagesContainer) {
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                }
-            });
+            // 1. 检查输入框是否有内容
+            if (!this.inputValue.trim()) {
+                return;
+            }
 
             try {
+                // 2. 准备图片数据
+                const pendingImages = this.pendingImageUploads || [];
+                console.log(`待上传图片数量：${pendingImages.length}张`);
+
+                // 3. 如果有待上传图片，添加提示消息
+                if (pendingImages.length > 0) {
+                    const uploadingMessage = {
+                        content: `正在处理${pendingImages.length}张图片...`,
+                        isOutgoing: false,
+                        isThinking: true,
+                        timestamp: new Date()
+                    };
+                    this.messages.push(uploadingMessage);
+                }
+
+                // 4. 添加用户消息到界面
+                const userMessage = {
+                    content: this.inputValue,
+                    isOutgoing: true,
+                    timestamp: new Date()
+                };
+                this.messages.push(userMessage);
+
+                // 5. 添加思考中的消息
+                const thinkingMessage = {
+                    content: '神经网络同步中...',
+                    isOutgoing: false,
+                    isThinking: true,
+                    timestamp: new Date()
+                };
+                this.messages.push(thinkingMessage);
+
+                // 启动思考动画
+                const thinkingInterval = this.updateThinkingDots();
+
+                // 6. 准备请求数据
                 const requestData = {
                     ja_v1: this.ja_v1,
                     tools_v1: this.tools_v1,
-                    message: userMessage.content
+                    message: this.inputValue,
+                    images: []
                 };
+
+                // 添加会话ID（如果有）
                 if (this.currentConversationId) {
                     requestData.conversation_id = this.currentConversationId;
                 }
 
+                // 处理图片数据
+                if (pendingImages.length > 0) {
+                    requestData.images = pendingImages.map(imageData => ({
+                        base64_data: imageData.content,
+                        file_name: imageData.file.name
+                    }));
+                }
+
+                // 7. 调用/chat接口
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
@@ -124,6 +147,7 @@ export const messageConfig = {
                 if (!response.ok) {
                     throw new Error(`API请求失败: ${response.status}`);
                 }
+
                 const data = await response.json();
                 
                 // 保存会话ID
@@ -139,6 +163,13 @@ export const messageConfig = {
                     timestamp: new Date()
                 };
                 this.messages.push(assistantMessage);
+
+                // 清空输入框和待上传图片列表
+                this.inputValue = '';
+                this.pendingImageUploads = [];
+                this.tempImageData = [];
+
+                // 播放音频（如果有）
                 if (data.audio_file_path) {
                     this.playAudio(data.audio_file_path);
                 }
@@ -149,7 +180,7 @@ export const messageConfig = {
                 this.messages = this.messages.filter(msg => !msg.isThinking);
                 // 添加错误消息
                 this.messages.push({
-                    content: '消息发送失败，请重试',
+                    content: error.message || '消息发送失败，请重试',
                     isOutgoing: false,
                     timestamp: new Date(),
                     isError: true
