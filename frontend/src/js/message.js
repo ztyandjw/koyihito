@@ -5,7 +5,7 @@ export const messageConfig = {
         const savedMessages = localStorage.getItem('chatMessages');
         const defaultMessages = [
             {
-                content: '欢迎小可爱注册～',
+                content: '毎日幸せでありますように',
                 isOutgoing: false,
                 timestamp: new Date()
             }
@@ -129,10 +129,17 @@ export const messageConfig = {
 
                 // 处理图片数据
                 if (pendingImages.length > 0) {
-                    requestData.images = pendingImages.map(imageData => ({
-                        base64_data: imageData.content,
-                        file_name: imageData.file.name
-                    }));
+                    requestData.images = pendingImages.map(imageData => {
+                        // 获取原文件后缀
+                        const originalExt = imageData.file.name.split('.').pop();
+                        // 生成新文件名：序号.后缀
+                        const newFileName = `${imageData.imageNumber}.${originalExt}`;
+                        
+                        return {
+                            base64_data: imageData.content,
+                            file_name: newFileName
+                        };
+                    });
                 }
 
                 // 7. 调用/chat接口

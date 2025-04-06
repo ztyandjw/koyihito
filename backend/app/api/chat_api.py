@@ -65,17 +65,17 @@ async def chat(request: ChatRequest):
         # 处理图片
         if request.images:
             BASE_DIR = Path(__file__).resolve().parent.parent.parent
-            IMAGES_DIR = os.path.join(BASE_DIR, "images")
+            conversation_id = request.conversation_id or str(uuid.uuid4())
+            
+            # 创建comfui/会话ID/input目录结构
+            IMAGES_DIR = os.path.join(BASE_DIR, "comfui", conversation_id, "input")
             os.makedirs(IMAGES_DIR, exist_ok=True)
             
             saved_image_paths = []
             for img in request.images:
                 try:
-                    # 生成唯一文件名
-                    timestamp = int(time.time())
-                    unique_id = str(uuid.uuid4())[:8]
-                    ext = os.path.splitext(img.file_name)[1] or '.png'
-                    image_filename = f"img_{timestamp}_{unique_id}{ext}"
+                    # 直接使用传入的文件名
+                    image_filename = img.file_name  # 这里已经是"序号.后缀"格式
                     image_path = os.path.join(IMAGES_DIR, image_filename)
                     
                     # 解码并保存图片
@@ -91,12 +91,8 @@ async def chat(request: ChatRequest):
                 
                 except Exception as e:
                     logger.error(f"保存图片失败: {str(e)}")
-                    continue
-            
-            # 将图片信息添加到消息中
-            if saved_image_paths:
-                request.message += "\n[图片列表：" + ", ".join(saved_image_paths) + "]"
-
+                    raise e
+        
         call_messages = []
         conversation_id = request.conversation_id or str(uuid.uuid4())
         logger.info("使用会话ID: %s", conversation_id)
