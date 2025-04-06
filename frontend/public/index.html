@@ -367,11 +367,13 @@
                             <!-- 发送的消息 -->
                             <div v-if="message.isOutgoing" class="message outgoing">
                                 <!-- 如果是图片消息，直接放在message下 -->
-                                <img v-if="message.type === 'image'"
-                                     :src="message.content" 
-                                     :class="['message-image', { 'expanded': message.isExpanded }]"
-                                     @click="toggleImageSize(message)"
-                                     alt="用户上传的图片">
+                                <div v-if="message.type === 'image'" class="image-container">
+                                    <img :src="message.content" 
+                                         :class="['message-image', { 'expanded': message.isExpanded }]"
+                                         @click="toggleImageSize(message)"
+                                         alt="用户上传的图片">
+                                    <div class="image-number" v-if="message.imageNumber">{{ message.imageNumber }}</div>
+                                </div>
                                 <!-- 如果是文本消息 -->
                                 <div v-else class="message-content">
                                     <span>{{ message.content }}</span>

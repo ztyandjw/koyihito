@@ -3,6 +3,7 @@ export const imageConfig = {
         return {
             showImageModal: false,
             modalImageUrl: '',
+            imageCounter: 0, // 添加图片计数器
         }
     },
     methods: {
@@ -15,13 +16,17 @@ export const imageConfig = {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    // 添加图片消息，增加isExpanded属性
+                    // 增加计数器
+                    this.imageCounter++;
+                    
+                    // 添加图片消息，增加isExpanded属性和序列号
                     const message = {
                         content: e.target.result,
                         isOutgoing: true,
                         timestamp: new Date(),
                         type: 'image',
-                        isExpanded: false  // 默认不展开
+                        isExpanded: false,  // 默认不展开
+                        imageNumber: this.imageCounter // 图片序列号
                     };
                     this.messages.push(message);
                     

@@ -44,7 +44,6 @@ def speech_to_text(audio_file_path, language="zh", model="medium"):
             text = re.search(r'[^\n]+$', response_data["data"]).group()
             logger.info(f"STT文本内容:" + text)
 
-            
             return True, text
         else:
             error_msg = f"STT请求失败，状态码: {response.status_code}，错误信息: {response.text}"
@@ -55,3 +54,4 @@ def speech_to_text(audio_file_path, language="zh", model="medium"):
         error_msg = f"STT服务调用出错: {str(e)}"
         logger.error(error_msg)
         return False, error_msg
+

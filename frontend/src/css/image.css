@@ -89,6 +89,27 @@
     max-width: 90%; /* 给边距留些空间 */
 }
 
+/* 图片容器样式 */
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* 图片序列号样式 */
+.image-number {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(64, 224, 208, 0.7);
+    color: #000;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 12px;
+    z-index: 10;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
 /* 图片预览模态框样式 */
 .image-modal-overlay {
     position: fixed;
