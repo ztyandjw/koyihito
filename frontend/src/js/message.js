@@ -125,10 +125,17 @@ export const messageConfig = {
                 }
 
                 if (pendingImages.length > 0) {
-                    requestData.images = pendingImages.map(imageData => ({
-                        base64_data: imageData.content,
-                        file_name: imageData.file.name
-                    }));
+                    requestData.images = pendingImages.map(imageData => {
+                        // 获取原文件后缀
+                        const originalExt = imageData.file.name.split('.').pop();
+                        // 使用图片序号作为文件名
+                        const newFileName = `${imageData.imageNumber}.${originalExt}`;
+                        
+                        return {
+                            base64_data: imageData.content,
+                            file_name: newFileName
+                        };
+                    });
                 }
 
                 // 7. 发送请求

@@ -1,0 +1,4 @@
+# 忽略 backend 下的特定目录中的所有文件
+backend/audio_files/**
+backend/chat_media/**
+backend/comfui/**
