@@ -17,7 +17,8 @@ export const messageConfig = {
             currentConversationId: null, // 当前会话ID
             thinkingDots: '',
             pendingImageUploads: [],
-            tempImageData: []
+            tempImageData: [],
+            imageCounter: 0
         }
     },
     beforeMount() {
@@ -79,28 +80,26 @@ export const messageConfig = {
             }
 
             try {
-                // 2. 准备图片数据
-                const pendingImages = this.pendingImageUploads || [];
-                console.log(`待上传图片数量：${pendingImages.length}张`);
+                // 2. 保存当前输入内容并立即清空输入框
+                const messageContent = this.inputValue;
+                this.inputValue = '';
 
-                // 3. 如果有待上传图片，添加提示消息
-                if (pendingImages.length > 0) {
-                    const uploadingMessage = {
-                        content: `正在处理${pendingImages.length}张图片...`,
-                        isOutgoing: false,
-                        isThinking: true,
-                        timestamp: new Date()
-                    };
-                    this.messages.push(uploadingMessage);
-                }
-
-                // 4. 添加用户消息到界面
+                // 3. 添加用户消息到界面并保存到localStorage
                 const userMessage = {
-                    content: this.inputValue,
+                    content: messageContent,
                     isOutgoing: true,
                     timestamp: new Date()
                 };
                 this.messages.push(userMessage);
+                localStorage.setItem('chatMessages', JSON.stringify(this.messages));
+
+                // 4. 立即滚动到底部
+                this.$nextTick(() => {
+                    const messagesContainer = document.querySelector('.messages-container');
+                    if (messagesContainer) {
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }
+                });
 
                 // 5. 添加思考中的消息
                 const thinkingMessage = {
@@ -110,39 +109,28 @@ export const messageConfig = {
                     timestamp: new Date()
                 };
                 this.messages.push(thinkingMessage);
-
-                // 启动思考动画
-                const thinkingInterval = this.updateThinkingDots();
-
+                
                 // 6. 准备请求数据
+                const pendingImages = this.pendingImageUploads || [];
                 const requestData = {
                     ja_v1: this.ja_v1,
                     tools_v1: this.tools_v1,
-                    message: this.inputValue,
+                    message: messageContent,
                     images: []
                 };
 
-                // 添加会话ID（如果有）
                 if (this.currentConversationId) {
                     requestData.conversation_id = this.currentConversationId;
                 }
 
-                // 处理图片数据
                 if (pendingImages.length > 0) {
-                    requestData.images = pendingImages.map(imageData => {
-                        // 获取原文件后缀
-                        const originalExt = imageData.file.name.split('.').pop();
-                        // 生成新文件名：序号.后缀
-                        const newFileName = `${imageData.imageNumber}.${originalExt}`;
-                        
-                        return {
-                            base64_data: imageData.content,
-                            file_name: newFileName
-                        };
-                    });
+                    requestData.images = pendingImages.map(imageData => ({
+                        base64_data: imageData.content,
+                        file_name: imageData.file.name
+                    }));
                 }
 
-                // 7. 调用/chat接口
+                // 7. 发送请求
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
@@ -157,26 +145,26 @@ export const messageConfig = {
 
                 const data = await response.json();
                 
-                // 保存会话ID
-                this.currentConversationId = data.conversation_id;
-
-                // 移除思考中的消息
+                // 8. 移除思考中的消息
                 this.messages = this.messages.filter(msg => !msg.isThinking);
                 
-                // 添加实际回复
+                // 9. 添加实际回复
                 const assistantMessage = {
                     content: data.response,
                     isOutgoing: false,
                     timestamp: new Date()
                 };
                 this.messages.push(assistantMessage);
+                localStorage.setItem('chatMessages', JSON.stringify(this.messages));
 
-                // 清空输入框和待上传图片列表
-                this.inputValue = '';
+                // 10. 清空待上传图片列表
                 this.pendingImageUploads = [];
                 this.tempImageData = [];
 
-                // 播放音频（如果有）
+                // 重置图片序号为1
+                this.imageCounter = 0;
+
+                // 11. 播放音频（如果有）
                 if (data.audio_file_path) {
                     this.playAudio(data.audio_file_path);
                 }
@@ -186,24 +174,19 @@ export const messageConfig = {
                 // 移除思考中的消息
                 this.messages = this.messages.filter(msg => !msg.isThinking);
                 // 添加错误消息
-                this.messages.push({
+                const errorMessage = {
                     content: error.message || '消息发送失败，请重试',
                     isOutgoing: false,
                     timestamp: new Date(),
                     isError: true
-                });
-            } finally {
-                // 清除思考动画
-                clearInterval(thinkingInterval);
-                // 保存到本地存储
+                };
+                this.messages.push(errorMessage);
                 localStorage.setItem('chatMessages', JSON.stringify(this.messages));
-                // 滚动到底部
-                this.$nextTick(() => {
-                    const messagesContainer = document.querySelector('.messages-container');
-                    if (messagesContainer) {
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    }
-                });
+
+                // 即使在错误情况下也重置图片序号为1
+                this.imageCounter = 0;
+                this.pendingImageUploads = [];
+                this.tempImageData = [];
             }
         }
     },
