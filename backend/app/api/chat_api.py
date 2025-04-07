@@ -4,6 +4,7 @@ from ollama import Client
 import asyncio
 from functools import partial
 from typing import Dict, List, Optional
+from app.error import CustomError
 import uuid
 import logging
 import traceback
@@ -14,6 +15,7 @@ import time
 from pathlib import Path
 from app.service.functioncall_service import call_function_service
 from app.service.ollamachat_service import get_ollama_response
+from app.service.ollamachat_service import get_single_function_call
 from app.configmanager import config
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -56,19 +58,24 @@ async def chat(request: ChatRequest):
 
         # 以键值对形式打印日志
     message_preview = request.message[:50] + "..." if len(request.message) > 50 else request.message
-    logger.info("收到聊天请求 message: %r; tools_v1: %s; conversation_id: %s", 
+    image_count = len(request.images) if request.images else 0
+    image_count = len(request.images) if request.images else 0
+    logger.info("收到聊天请求 message: %r; tools_v1: %s; conversation_id: %s; 图片数量: %d张", 
                 message_preview, 
                 request.tools_v1, 
-                request.conversation_id or "新会话")
-                
+                request.conversation_id or "新会话",
+                image_count)
+    
+    call_messages = []
+    conversation_id = request.conversation_id or str(uuid.uuid4())
+    logger.info("使用会话ID: %s", conversation_id)    
     try:
         # 处理图片
         if request.images:
             BASE_DIR = Path(__file__).resolve().parent.parent.parent
             conversation_id = request.conversation_id or str(uuid.uuid4())
             
-            # 创建comfui/会话ID/input目录结构
-            IMAGES_DIR = os.path.join(BASE_DIR, "comfui", conversation_id, "input")
+            IMAGES_DIR = os.path.join(BASE_DIR, "uploadimages", conversation_id, "input")
             os.makedirs(IMAGES_DIR, exist_ok=True)
             
             saved_image_paths = []
@@ -91,11 +98,16 @@ async def chat(request: ChatRequest):
                 
                 except Exception as e:
                     logger.error(f"保存图片失败: {str(e)}")
-                    raise e
+                    raise CustomError(f"保存图片失败: {str(e)}")
+            # 這裡圖片已經保存完畢
+            get_single_function_call(
+                message=request.message,
+                model_name=config.ja_model if request.ja_v1 == True else config.normal_model,
+                tools=call_function_service(request.message)
+            )
+
+
         
-        call_messages = []
-        conversation_id = request.conversation_id or str(uuid.uuid4())
-        logger.info("使用会话ID: %s", conversation_id)
         # 获取或初始化会话历史
         if request.ja_v1:
             if conversation_id not in conversation_histories_ja:

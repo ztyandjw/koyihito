@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import asyncio
 from functools import partial
 import logging
@@ -20,7 +20,7 @@ def get_single_function_call(
     message: str,
     model_name: str,
     tools: List[Dict[str, object]],
-):
+) -> Tuple[str, Dict[str, object]]:
     """
     """
     try:
@@ -29,6 +29,7 @@ def get_single_function_call(
         response = ollama_client.chat(
             messages=conversation_history,
             model=model_name,
+            tools=tools,
             stream=False
         )
         if not response['message']['content']['tool_calls'] or len( response['message']['content']['tool_calls']) < 1:
